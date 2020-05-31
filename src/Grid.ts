@@ -93,7 +93,7 @@ export default class Grid {
       if (!visited.has(step)) this.dfs(step, target, visited);
     }
 
-    return [visited, visited.size];
+    return visited;
   }
 
   print() {
