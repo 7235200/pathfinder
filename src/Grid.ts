@@ -3,10 +3,15 @@ export type TSource = TValue[][];
 
 export default class Grid {
   graph: Map<string, Set<string>>;
+  start: string;
+  target: string;
+  isDone = false;
 
   constructor(source: TSource) {
     this.graph = new Map();
     this.fill(source);
+    this.start = '0,0';
+    this.target = [source[0].length - 1, source.length - 1].toString();
   }
 
   addNode(node: string) {
@@ -65,10 +70,34 @@ export default class Grid {
     }
   }
 
-  print() {
-    const nodes = Array.from(this.graph.keys());
+  dfs(
+    start: string = this.start,
+    target: string = this.target,
+    visited = new Set()
+  ) {
+    if (visited.size === 0) this.isDone = false;
+    if (this.isDone) return;
 
-    for (const node of nodes) {
+    visited.add(start);
+    const steps = this.graph.get(start);
+
+    if (!steps) return;
+
+    for (const step of steps) {
+      if (step === target) {
+        visited.add(step);
+        this.isDone = true;
+        return;
+      }
+
+      if (!visited.has(step)) this.dfs(step, target, visited);
+    }
+
+    return [visited, visited.size];
+  }
+
+  print() {
+    for (const node of this.graph.keys()) {
       const siblings = Array.from(this.graph.get(node)!).reduce(
         (str: string, value: string) => `${str} [${value}]`,
         ''
