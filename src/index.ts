@@ -1,7 +1,11 @@
-const data = [
-    [0,0,1,0],
-    [1,0,0,0],
-    [1,0,1,1],
+import Grid, { TSource } from './Grid';
+
+const source: TSource = [
+  [0, 0, 0, 0, 1],
+  [1, 0, 1, 0, 0],
+  [1, 0, 1, 0, 1],
+  [1, 0, 0, 0, 0]
 ];
 
-console.log(data);
+const grid = new Grid(source);
+grid.print();
