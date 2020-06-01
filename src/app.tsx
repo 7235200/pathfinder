@@ -1,15 +1,62 @@
-import { h } from 'preact';
+import { h, Fragment } from 'preact';
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef
+} from 'preact/hooks';
+import { memo } from 'preact/compat';
 
-import Graph, { TSource } from './utils/graph';
-import Grid from './utils/grid';
+import Graph from './utils/graph';
+import GridSource, { TGridInstance } from './utils/grid';
+import Grid from './grid';
+
+import { usePathFinder } from './usePathFinder';
+
+const source = new GridSource(20, 20, 0.2, [0, 5, 10, 15]);
 
 const App = () => {
-  const grid = new Grid(10, 10, 0.5);
-  const graph = new Graph(grid.instance);
+  const [grid, setGrid] = useState(source.instance);
+  const graph = useMemo(() => new Graph(grid), [grid]);
 
-  graph.print();
+  const finder1 = usePathFinder(graph, 'red');
+  const finder2 = usePathFinder(graph, 'blue', '5,0');
+  const finder3 = usePathFinder(graph, 'orange', '10,0');
 
-  return <div>lol</div>;
+  const create = useCallback(() => {
+    setGrid(source.createGrid());
+  }, []);
+
+  const run = useCallback(() => {
+    finder1.run();
+    finder2.run();
+    finder3.run();
+  }, []);
+
+  const isDone = finder1.isDone || finder2.isDone || finder3.isDone;
+
+  useEffect(() => {
+    if (!isDone) return;
+    finder1.stop();
+    finder2.stop();
+    finder3.stop();
+  }, [isDone]);
+
+  const finders = useMemo(() => ({
+    [finder1.activeId]: finder1.color,
+    [finder2.activeId]: finder2.color,
+    [finder3.activeId]: finder3.color
+  }), [finder1, finder2, finder3]);
+
+  return (
+    <Fragment>
+      <button onClick={create}>generate</button>
+      <button onClick={run}>run</button>
+
+      <Grid source={grid} {...{ finders }} />
+    </Fragment>
+  );
 };
 
-export default App;
+export default memo(App);

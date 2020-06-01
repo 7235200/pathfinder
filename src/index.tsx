@@ -1,4 +1,4 @@
-import './main.css';
+import './global.css';
 
 import { h, render } from 'preact';
 import App from './app';

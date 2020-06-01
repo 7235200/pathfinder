@@ -16,6 +16,10 @@ export default {
     resolve(),
     typescript(),
     postcss({
+      modules: true,
+      sourceMap: true,
+      extract: true,
+      minimize: true,
       extensions: ['.css']
     }),
     serve('public')

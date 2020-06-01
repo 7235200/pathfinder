@@ -1,12 +1,5 @@
-html, 
-body {
-    height: 100%;
-    font-size: 16px;
-}
-
-#grid {
+.container {
     position: relative;
-    margin-top: 1rem;
 }
 
 .node {
@@ -20,9 +13,5 @@ body {
 }
 
 .node[data-blocked="true"] {
-    background: lightgrey;
-}
-
-.node[data-active="true"] {
-    background: red;
+    background: lightgrey !important;
 }

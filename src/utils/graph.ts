@@ -11,10 +11,14 @@ export default class Graph {
     this.graph = new Map();
     this.createFrom(source);
 
-    // take the top left item as a default start
+    // take the top left item as a default input
     this.start = '0,0';
-    // take the bottom right item as a default target
-    this.target = [source[0].length - 1, source.length - 1].toString();
+
+    // take the bottom center item as a default output
+    this.target = [
+      Math.floor(source[0].length / 2),
+      source.length - 1
+    ].toString();
   }
 
   addNode(node: string) {
@@ -76,14 +80,14 @@ export default class Graph {
   dfs(
     start: string = this.start,
     target: string = this.target,
-    visited = new Set()
-  ) {
+    visited: Set<string> = new Set()
+  ): string[] | undefined {
     if (visited.size === 0) this.isDone = false;
     if (this.isDone) return;
 
     visited.add(start);
-    const steps = this.graph.get(start);
 
+    const steps = this.graph.get(start);
     if (!steps) return;
 
     for (const step of steps) {
@@ -96,7 +100,7 @@ export default class Graph {
       if (!visited.has(step)) this.dfs(step, target, visited);
     }
 
-    return visited;
+    return Array.from(visited);
   }
 
   print() {
