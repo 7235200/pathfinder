@@ -1,16 +1,19 @@
 type TValue = 0 | 1;
 export type TSource = TValue[][];
 
-export default class Grid {
+export default class Graph {
   graph: Map<string, Set<string>>;
   start: string;
   target: string;
-  isDone = false;
+  isDone: boolean = false;
 
   constructor(source: TSource) {
     this.graph = new Map();
-    this.fill(source);
+    this.createFrom(source);
+
+    // take the top left item as a default start
     this.start = '0,0';
+    // take the bottom right item as a default target
     this.target = [source[0].length - 1, source.length - 1].toString();
   }
 
@@ -19,17 +22,17 @@ export default class Grid {
   }
 
   addEdge(from: string, to: string) {
-    const fromNode = this.graph.get(from);
-    if (fromNode) fromNode.add(to);
+    const node = this.graph.get(from);
+    if (node) node.add(to);
   }
 
   addSibling(currentNode: string, sibling: [number, number]) {
-    const siblingNode = String(sibling);
-    if (!this.graph.has(siblingNode)) this.addNode(siblingNode);
-    this.addEdge(currentNode, siblingNode);
+    const node = String(sibling);
+    if (!this.graph.has(node)) this.addNode(node);
+    this.addEdge(currentNode, node);
   }
 
-  fill(matrix: TSource) {
+  createFrom(matrix: TSource) {
     let x = 0;
 
     while (x < matrix[0].length) {
@@ -99,7 +102,7 @@ export default class Grid {
   print() {
     for (const node of this.graph.keys()) {
       const siblings = Array.from(this.graph.get(node)!).reduce(
-        (str: string, value: string) => `${str} [${value}]`,
+        (str: string, value: string) => `${str}[${value}]`,
         ''
       );
 

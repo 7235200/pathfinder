@@ -1,5 +1,5 @@
 import './main.css';
-import Grid, { TSource } from './Grid';
+import Grid, { TSource } from './utils/graph';
 
 const genRow = (size: number) => {
   return new Array(size).fill(1).map(getRandom);

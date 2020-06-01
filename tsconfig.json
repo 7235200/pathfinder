@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
-    "module": "esnext",                    
-    "target": "es6",                          
-    "lib": ["es6"],                     
-    "rootDir": "src",
-    "allowJs": true,
-    "strict": true,         
-    "noImplicitAny": true,
-    "esModuleInterop": true,
-    "downlevelIteration": true
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "jsxFactory": "h",
+    "strict": true
   },
   "include": [
-    "src/**/*"
+    "./src/**/*.tsx",
+    "./src/**/*.ts"
   ],
   "exclude": [
     "dist",
