@@ -1,6 +1,6 @@
 import './global.css';
 
 import { h, render } from 'preact';
-import App from './app';
+import Root from './root';
 
-render(<App />, document.getElementById('root')!);
+render(<Root />, document.getElementById('root')!);

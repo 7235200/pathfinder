@@ -1,42 +1,32 @@
-type TValue = 0 | 1;
-export type TSource = TValue[][];
+import { TGridInstance } from './grid';
+export type TGraphInstance = Map<string, Set<string>>;
 
 export default class Graph {
-  graph: Map<string, Set<string>>;
-  start: string;
-  target: string;
-  isDone: boolean = false;
+  source: TGridInstance;
+  instance: TGraphInstance = new Map();
 
-  constructor(source: TSource) {
-    this.graph = new Map();
+  constructor(source: TGridInstance) {
+    this.source = source;
     this.createFrom(source);
-
-    // take the top left item as a default input
-    this.start = '0,0';
-
-    // take the bottom center item as a default output
-    this.target = [
-      Math.floor(source[0].length / 2),
-      source.length - 1
-    ].toString();
   }
 
   addNode(node: string) {
-    this.graph.set(node, new Set());
+    this.instance.set(node, new Set());
   }
 
   addEdge(from: string, to: string) {
-    const node = this.graph.get(from);
+    const node = this.instance.get(from);
     if (node) node.add(to);
   }
 
   addSibling(currentNode: string, sibling: [number, number]) {
     const node = String(sibling);
-    if (!this.graph.has(node)) this.addNode(node);
+    if (!this.instance.has(node)) this.addNode(node);
     this.addEdge(currentNode, node);
   }
 
-  createFrom(matrix: TSource) {
+  createFrom(matrix: TGridInstance) {
+    this.instance = new Map();
     let x = 0;
 
     while (x < matrix[0].length) {
@@ -74,43 +64,6 @@ export default class Graph {
       }
 
       x++;
-    }
-  }
-
-  dfs(
-    start: string = this.start,
-    target: string = this.target,
-    visited: Set<string> = new Set()
-  ): string[] | undefined {
-    if (visited.size === 0) this.isDone = false;
-    if (this.isDone) return;
-
-    visited.add(start);
-
-    const steps = this.graph.get(start);
-    if (!steps) return;
-
-    for (const step of steps) {
-      if (step === target) {
-        visited.add(step);
-        this.isDone = true;
-        return;
-      }
-
-      if (!visited.has(step)) this.dfs(step, target, visited);
-    }
-
-    return Array.from(visited);
-  }
-
-  print() {
-    for (const node of this.graph.keys()) {
-      const siblings = Array.from(this.graph.get(node)!).reduce(
-        (str: string, value: string) => `${str}[${value}]`,
-        ''
-      );
-
-      console.log(`[${node}] -> ${siblings}`);
     }
   }
 }

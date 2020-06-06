@@ -8,32 +8,26 @@ function w$1(n,t){for(var e in t)n[e]=t[e];return n}function x$2(n,t){for(var e 
 
 class Graph {
     constructor(source) {
-        this.isDone = false;
-        this.graph = new Map();
+        this.instance = new Map();
+        this.source = source;
         this.createFrom(source);
-        // take the top left item as a default input
-        this.start = '0,0';
-        // take the bottom center item as a default output
-        this.target = [
-            Math.floor(source[0].length / 2),
-            source.length - 1
-        ].toString();
     }
     addNode(node) {
-        this.graph.set(node, new Set());
+        this.instance.set(node, new Set());
     }
     addEdge(from, to) {
-        const node = this.graph.get(from);
+        const node = this.instance.get(from);
         if (node)
             node.add(to);
     }
     addSibling(currentNode, sibling) {
         const node = String(sibling);
-        if (!this.graph.has(node))
+        if (!this.instance.has(node))
             this.addNode(node);
         this.addEdge(currentNode, node);
     }
     createFrom(matrix) {
+        this.instance = new Map();
         let x = 0;
         while (x < matrix[0].length) {
             let y = 0;
@@ -64,43 +58,47 @@ class Graph {
             x++;
         }
     }
-    dfs(start = this.start, target = this.target, visited = new Set()) {
-        if (visited.size === 0)
-            this.isDone = false;
-        if (this.isDone)
-            return;
-        visited.add(start);
-        const steps = this.graph.get(start);
-        if (!steps)
-            return;
-        for (const step of steps) {
-            if (step === target) {
-                visited.add(step);
-                this.isDone = true;
-                return;
-            }
-            if (!visited.has(step))
-                this.dfs(step, target, visited);
-        }
-        return Array.from(visited);
+}
+
+class Dfs {
+    constructor(graph, input, output) {
+        this.graph = graph;
+        this.input = input;
+        this.output = output;
+        this.success = false;
+        this.search();
     }
-    print() {
-        for (const node of this.graph.keys()) {
-            const siblings = Array.from(this.graph.get(node)).reduce((str, value) => `${str}[${value}]`, '');
-            console.log(`[${node}] -> ${siblings}`);
+    search(graph = this.graph, input = this.input, output = this.output, visited = new Set()) {
+        visited.add(input);
+        if (input === output) {
+            this.instance = Array.from(visited);
+            this.success = true;
+            return input;
         }
+        const children = graph.get(input);
+        if (!children)
+            return null;
+        for (const child of children) {
+            if (!visited.has(child)) {
+                const result = this.search(graph, child, output, visited);
+                // do not continue if we've found the target
+                if (result)
+                    return result;
+            }
+        }
+        this.instance = Array.from(visited);
+        this.success = false;
+        return null;
     }
 }
 
 class Grid {
-    constructor(width, height, proximity, input, output) {
+    constructor(width, height, proximity, inputIndex, outputIndex) {
         this.createCellValue = (proximity = this.proximity) => {
             return Math.random() < proximity ? 1 : 0;
         };
-        this.createRow = (size = this.width, proximity = this.proximity) => {
-            return new Array(size).fill(1).map(() => this.createCellValue(proximity));
-        };
-        this.createGrid = (width = this.width, sourceHeight = this.height, proximity = this.proximity, input = this.input, output = this.output) => {
+        this.createRow = (size = this.width, proximity = this.proximity) => new Array(size).fill(1).map(() => this.createCellValue(proximity));
+        this.createGrid = (width = this.width, sourceHeight = this.height, proximity = this.proximity, inputIndex = this.inputIndex, outputIndex = this.outputIndex) => {
             const grid = [];
             let height = sourceHeight;
             while (height >= 0) {
@@ -108,116 +106,90 @@ class Grid {
                 height--;
             }
             // make sure input cells are opened
-            input.forEach(inputIndex => {
-                grid[0][inputIndex] = 0;
-            });
+            grid[0][inputIndex] = 0;
             // make sure output cells are opened
-            output.forEach(outputIndex => {
-                grid[sourceHeight - 1][outputIndex] = 0;
-            });
+            grid[sourceHeight - 1][outputIndex] = 0;
             this.instance = grid;
             return grid;
         };
         this.width = width;
         this.height = height;
         this.proximity = proximity;
-        this.input = input;
-        this.output = output || input; // symmetric to input indexes by default
+        this.inputIndex = inputIndex;
+        this.outputIndex = outputIndex;
         this.instance = this.createGrid();
     }
 }
 
-var css = {"container":"styles-mod_container__wxWpd","node":"styles-mod_node__1Ck5P"};
+var css = {"container":"grid-mod_container__3xv_h"};
+
+var css$1 = {"node":"cell-mod_node__1-__j"};
 
 const chordsToId = (x, y) => `${x},${y}`;
 const defaultRem = 16;
-const getPosition = (x, y, color, rem = defaultRem) => ({
-    top: y * rem,
-    left: x * rem,
-    backgroundColor: color
-});
+const getPosition = (x, y, rem = defaultRem) => ({ top: y * rem, left: x * rem });
 
-const GridCells = ({ source, finders }) => {
+const Cell = ({ id, x, y, isBlocked, isActive, isInput, isOutput }) => (h("div", Object.assign({ key: id }, { id }, { style: getPosition(x, y), "data-blocked": isBlocked, "data-active": isActive, "data-input": isInput, "data-output": isOutput, className: css$1.node })));
+
+const GridCells = ({ source, activeCellId, inputCellId, outputCellId }) => {
     return (h("div", { className: css.container }, /* prettier-ignore*/ source.map((height, y) => height.map((value, x) => {
-        return (h(Cell, Object.assign({ id: chordsToId(x, y), color: finders[chordsToId(x, y)], isBlocked: Boolean(value) }, { x, y })));
+        const id = chordsToId(x, y);
+        return (h(Cell, Object.assign({}, { x, y, id }, { isBlocked: Boolean(value), isActive: id === activeCellId, isInput: id === inputCellId, isOutput: id === outputCellId })));
     }))));
 };
-const Cell = ({ id, x, y, color = 'transparent', isBlocked }) => (h("div", Object.assign({ key: id }, { id }, { style: getPosition(x, y, color), "data-blocked": isBlocked, className: css.node })));
+var Grid$1 = C$1(GridCells);
 
-const defaultFps = 60;
-const usePathFinder = (graph, color, input = '0,0', fps = defaultFps) => {
-    const timeouts = d$1([]);
-    const [activeId, setActiveId] = m$1('');
-    const [isDone, setIsDone] = m$1(false);
-    const stop = T$1(() => {
-        timeouts.current.forEach(clearTimeout);
-        timeouts.current = [];
-    }, []);
-    const clear = T$1(() => {
-        setActiveId('');
-    }, []);
+const defaultFps = 120;
+function usePath(path = [], fps = defaultFps) {
+    const interval = d$1(null);
+    const [activeId, setActiveId] = m$1(path[0]);
+    const run = () => {
+        stop();
+        let idx = 0;
+        interval.current = setInterval(() => {
+            if (idx === path.length)
+                stop();
+            setActiveId(path[idx]);
+            idx++;
+        }, fps);
+    };
+    const stop = () => {
+        if (!interval.current)
+            return;
+        clearInterval(interval.current);
+        interval.current = null;
+    };
     l(() => {
         stop();
-        clear();
-    }, [graph]);
-    const run = T$1(() => {
-        setIsDone(false);
-        clear();
-        const route = graph.dfs(input);
-        if (!route)
-            return;
-        route.forEach((nodeId, idx) => {
-            const t = setTimeout(() => {
-                setActiveId(nodeId);
-                if (!route[idx + 1])
-                    setIsDone(true);
-            }, fps * idx);
-            timeouts.current.push(t);
-        });
-    }, [graph]);
-    return {
-        run,
-        stop,
-        activeId,
-        color,
-        isDone,
-        clear
-    };
-};
+        setActiveId(path[0]);
+    }, [path]);
+    return { activeId, run, stop };
+}
 
-const source = new Grid(20, 20, 0.2, [0, 5, 10, 15]);
-const App = () => {
+// genreate initial grid instance
+// prettier-ignore
+const source = new Grid(10 /* width */, 10 /* height */, 0.2 /* proximity */, 0 /* input index */, 9 /* output index */);
+// set up the graph on the grid basis
+const graph = new Graph(source.instance);
+// calculate the shortest path
+const dfs = new Dfs(graph.instance, '0,0' /* top left */, '9,10' /* bottom right */);
+const Root = () => {
     const [grid, setGrid] = m$1(source.instance);
-    const graph = h$1(() => new Graph(grid), [grid]);
-    const finder1 = usePathFinder(graph, 'red');
-    const finder2 = usePathFinder(graph, 'blue', '5,0');
-    const finder3 = usePathFinder(graph, 'orange', '10,0');
-    const create = T$1(() => {
+    const [path, setPath] = m$1(dfs.instance);
+    const { activeId, run } = usePath(path);
+    l(() => {
+        graph.createFrom(grid);
+        dfs.search(graph.instance);
+        setPath(dfs.instance);
+    }, [grid]);
+    const createGrid = T$1(() => {
         setGrid(source.createGrid());
     }, []);
-    const run = T$1(() => {
-        finder1.run();
-        finder2.run();
-        finder3.run();
-    }, []);
-    const isDone = finder1.isDone || finder2.isDone || finder3.isDone;
-    l(() => {
-        if (!isDone)
-            return;
-        finder1.stop();
-        finder2.stop();
-        finder3.stop();
-    }, [isDone]);
-    const finders = h$1(() => ({
-        [finder1.activeId]: finder1.color,
-        [finder2.activeId]: finder2.color,
-        [finder3.activeId]: finder3.color
-    }), [finder1, finder2, finder3]);
     return (h(d, null,
-        h("button", { onClick: create }, "generate"),
+        h("button", { onClick: createGrid }, "generate"),
         h("button", { onClick: run }, "run"),
-        h(GridCells, Object.assign({ source: grid }, { finders }))));
+        h(Grid$1, { source: grid, inputCellId: dfs.input, outputCellId: dfs.output, activeCellId: activeId })));
 };
-var App$1 = C$1(App);
+var Root$1 = C$1(Root);
 
-H(h(App$1, null), document.getElementById('root'));
+H(h(Root$1, null), document.getElementById('root'));

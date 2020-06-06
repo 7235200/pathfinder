@@ -1,26 +1,37 @@
-import css from './styles.mod.css';
+import css from './styles/grid.mod.css';
 import { h, FunctionComponent } from 'preact';
+import { memo } from 'preact/compat';
 
-import { TGridInstance } from '../utils/grid';
-import { chordsToId, getPosition } from './common';
+import Cell from './cell';
+import { TGridInstance } from '~/utils/grid';
+import { chordsToId } from './common';
 
 type TProps = {
   source: TGridInstance;
-  finders: { [key: string]: string };
+  inputCellId?: string;
+  outputCellId?: string;
   activeCellId?: string;
 };
 
-const GridCells: FunctionComponent<TProps> = ({ source, finders }) => {
+const GridCells: FunctionComponent<TProps> = ({
+  source,
+  activeCellId,
+  inputCellId,
+  outputCellId
+}) => {
   return (
     <div className={css.container}>
       {/* prettier-ignore*/
       source.map((height, y) => height.map((value, x) => {
+        const id = chordsToId(x, y);
+
         return (
           <Cell
-            id={chordsToId(x, y)}
-            color={finders[chordsToId(x, y)]}
+            {...{ x, y, id }}
             isBlocked={Boolean(value)}
-            {...{ x, y }}
+            isActive={id === activeCellId}
+            isInput={id === inputCellId}
+            isOutput={id === outputCellId}
           />
         )})
       )}
@@ -28,28 +39,4 @@ const GridCells: FunctionComponent<TProps> = ({ source, finders }) => {
   );
 };
 
-export default GridCells;
-
-type TCellProps = {
-  id: string;
-  x: number;
-  y: number;
-  color?: string;
-  isBlocked: boolean;
-};
-
-const Cell: FunctionComponent<TCellProps> = ({
-  id,
-  x,
-  y,
-  color = 'transparent',
-  isBlocked
-}) => (
-  <div
-    key={id}
-    {...{ id }}
-    style={getPosition(x, y, color)}
-    data-blocked={isBlocked}
-    className={css.node}
-  />
-);
+export default memo(GridCells);

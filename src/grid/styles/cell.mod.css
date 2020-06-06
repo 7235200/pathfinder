@@ -1,0 +1,27 @@
+.node {
+    --node-size: 1rem;   
+    --node-background-color: white;
+
+    position: absolute;
+    width: var(--node-size);
+    height: var(--node-size);
+    background: var(--node-background-color);
+    border: 1px solid white;
+    transition: background .2s ease-in;
+}
+
+.node[data-blocked="true"] {
+    --node-background-color: lightgrey;
+}
+
+.node[data-active="true"] {
+    --node-background-color: blue;
+}
+
+.node[data-input="true"] {
+    --node-background-color: lightblue;
+}
+
+.node[data-output="true"] {
+    --node-background-color: lightblue;
+}
