@@ -1,6 +1,8 @@
 {
   "name": "pathfinder",
   "version": "1.0.0",
+  "description": "graphs playground",
+  "author": "https://github.com/7235200",
   "main": "build/bundle.js",
   "scripts": {
     "start": "cp -a public/. build && rollup -c --watch",
