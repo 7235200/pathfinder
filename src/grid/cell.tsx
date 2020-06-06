@@ -1,5 +1,5 @@
 import css from './styles/cell.mod.css';
-import { h, FunctionComponent } from 'preact';
+import { h, FunctionComponent as FC } from 'preact';
 
 type TCellProps = {
   x: number;
@@ -11,7 +11,7 @@ type TCellProps = {
   isActive: boolean;
 };
 
-const Cell: FunctionComponent<TCellProps> = ({
+const Cell: FC<TCellProps> = ({
   x,
   y,
   rem,

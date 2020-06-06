@@ -1,10 +1,10 @@
 {
   "name": "pathfinder",
   "version": "1.0.0",
-  "main": "public/bundle.js",
+  "main": "build/bundle.js",
   "scripts": {
-    "start": "rollup -c --watch",
-    "build": "rollup -c"
+    "start": "cp -a public/. build && rollup -c --watch",
+    "build": "cp -a public/. build && rollup -c --environment BUILD:production"
   },
   "license": "ISC",
   "dependencies": {

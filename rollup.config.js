@@ -3,6 +3,24 @@ import postcss from 'rollup-plugin-postcss';
 import resolve from '@rollup/plugin-node-resolve';
 import serve from 'rollup-plugin-serve';
 import typescript from 'rollup-plugin-typescript2';
+import { terser } from 'rollup-plugin-terser';
+
+const isProduction = process.env.BUILD === 'production';
+
+const plugins = [
+  resolve(),
+  typescript(),
+  postcss({
+    modules: true,
+    extract: true,
+    sourceMap: !isProduction,
+    minimize: isProduction,
+    extensions: ['.css']
+  })
+];
+
+if (isProduction) plugins.push(terser());
+else plugins.push(serve('build'));
 
 export default {
   input: 'src/index.tsx',
@@ -10,16 +28,5 @@ export default {
     file: pkg.main,
     format: 'cjs'
   },
-  plugins: [
-    resolve(),
-    typescript(),
-    postcss({
-      modules: true,
-      sourceMap: true,
-      extract: true,
-      minimize: true,
-      extensions: ['.css']
-    }),
-    serve('public')
-  ]
+  plugins
 };
