@@ -1,13 +1,8 @@
 .node {
-    --node-size: 1rem;   
     --node-background-color: white;
-
-    position: absolute;
-    width: var(--node-size);
-    height: var(--node-size);
-    background: var(--node-background-color);
-    border: 1px solid white;
-    transition: background .2s ease-in;
+    fill: var(--node-background-color);
+    stroke: white;
+    transition: fill .2s ease-in;
 }
 
 .node[data-blocked="true"] {

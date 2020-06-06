@@ -1,3 +1,4 @@
-.container {
-    position: relative;
+.grid {
+    flex-shrink: 0;
+    margin-right: 2rem;
 }

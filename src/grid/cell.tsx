@@ -1,11 +1,10 @@
 import css from './styles/cell.mod.css';
 import { h, FunctionComponent } from 'preact';
-import { getPosition } from './common';
 
 type TCellProps = {
-  id: string;
   x: number;
   y: number;
+  rem: number;
   isInput: boolean;
   isOutput: boolean;
   isBlocked: boolean;
@@ -13,18 +12,19 @@ type TCellProps = {
 };
 
 const Cell: FunctionComponent<TCellProps> = ({
-  id,
   x,
   y,
+  rem,
   isBlocked,
   isActive,
   isInput,
   isOutput
 }) => (
-  <div
-    key={id}
-    {...{ id }}
-    style={getPosition(x, y)}
+  <rect
+    height={rem}
+    width={rem}
+    x={x * rem}
+    y={y * rem}
     data-blocked={isBlocked}
     data-active={isActive}
     data-input={isInput}

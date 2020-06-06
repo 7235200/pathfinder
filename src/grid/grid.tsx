@@ -4,7 +4,8 @@ import { memo } from 'preact/compat';
 
 import Cell from './cell';
 import { TGridInstance } from '~/utils/grid';
-import { chordsToId } from './common';
+
+const rem = 20;
 
 type TProps = {
   source: TGridInstance;
@@ -20,23 +21,31 @@ const GridCells: FC<TProps> = ({
   outputCellId
 }) => {
   return (
-    <div className={css.container}>
-      {/* prettier-ignore*/
+    <svg
+      width={source[0].length * rem}
+      height={source.length * rem}
+      className={css.grid}
+    >
+      {// prettier-ignore
       source.map((height, y) => height.map((value, x) => {
-        const id = chordsToId(x, y);
+          const id = chordsToId(x, y);
 
-        return (
-          <Cell
-            {...{ x, y, id }}
-            isBlocked={Boolean(value)}
-            isActive={id === activeCellId}
-            isInput={id === inputCellId}
-            isOutput={id === outputCellId}
-          />
-        )})
+          return (
+            <Cell
+              key={id}
+              {...{ x, y, rem }}
+              isBlocked={Boolean(value)}
+              isActive={id === activeCellId}
+              isInput={id === inputCellId}
+              isOutput={id === outputCellId}
+            />
+          );
+        })
       )}
-    </div>
+    </svg>
   );
 };
 
 export default memo(GridCells);
+
+export const chordsToId = (x: number, y: number) => `${x},${y}`;

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'preact/hooks';
 
-const defaultFps = 120;
+const defaultFps = 80;
 
 export default function usePath(path: string[] = [], fps: number = defaultFps) {
   const interval = useRef<NodeJS.Timeout | null>(null);
