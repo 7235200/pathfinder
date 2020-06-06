@@ -6,16 +6,18 @@ import Graph from '~/utils/graph';
 import Dfs from '~/utils/dfs';
 import GridSource from '~/utils/grid';
 import Grid from '~/grid';
+import Actions from '~/actions';
+import Legend from '~/legend';
 import usePath from './usePath';
 
 // genreate initial grid instance
 // prettier-ignore
 const source = new GridSource(
-  10  /* width */,
-  10  /* height */,
+  15  /* width */,
+  15  /* height */,
   0.2 /* proximity */,
   0   /* input index */,
-  9   /* output index */
+  15   /* output index */
 );
 
 // set up the graph on the grid basis
@@ -25,13 +27,13 @@ const graph = new Graph(source.instance);
 const dfs = new Dfs(
   graph.instance,
   '0,0' /* top left */,
-  '9,10' /* bottom right */
+  '14,15' /* bottom right */
 );
 
 const Root = () => {
   const [grid, setGrid] = useState(source.instance);
   const [path, setPath] = useState(dfs.instance);
-  const { activeId, run } = usePath(path);
+  const { activeId, currentStep, run } = usePath(path);
 
   useEffect(() => {
     graph.createFrom(grid);
@@ -45,9 +47,12 @@ const Root = () => {
 
   return (
     <Fragment>
-      <button onClick={createGrid}>generate</button>
-      <button onClick={run}>run</button>
-
+      <Actions onRun={run} onCreate={createGrid} />
+      <Legend
+        success={dfs.success}
+        currentStep={currentStep}
+        activeCellId={activeId}
+      />
       <Grid
         source={grid}
         inputCellId={dfs.input}

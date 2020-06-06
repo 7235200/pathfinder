@@ -1,0 +1,14 @@
+.container {
+    width: 9rem;
+    margin: 0.5rem 0;
+    padding: 0.25rem 1rem;
+    border: 1px solid lightgrey;
+    border-radius: 0.25rem;
+}
+
+.dl {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 0;
+    margin: 0.5rem 0;
+}

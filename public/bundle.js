@@ -139,44 +139,70 @@ const GridCells = ({ source, activeCellId, inputCellId, outputCellId }) => {
 };
 var Grid$1 = C$1(GridCells);
 
+var css$2 = {"action":"styles-mod_action__2Qupr"};
+
+const Actions = ({ onCreate, onRun }) => (h(d, null,
+    h("button", { className: css$2.action, onClick: onCreate, children: "generate" }),
+    h("button", { className: css$2.action, onClick: onRun, children: "run" })));
+
+var css$3 = {"container":"styles-mod_container__2G1Xn","dl":"styles-mod_dl__2Q3C4"};
+
+const Legend = ({ activeCellId, currentStep, success }) => (h("legend", { className: css$3.container },
+    h("dl", { className: css$3.dl },
+        h("dt", { children: "active cell" }),
+        h("dd", { children: activeCellId })),
+    h("dl", { className: css$3.dl },
+        h("dt", { children: "total steps" }),
+        h("dd", { children: currentStep })),
+    h("dl", { className: css$3.dl },
+        h("dt", { children: "success" }),
+        h("dd", { children: String(success) }))));
+
 const defaultFps = 120;
 function usePath(path = [], fps = defaultFps) {
     const interval = d$1(null);
     const [activeId, setActiveId] = m$1(path[0]);
-    const run = () => {
-        stop();
-        let idx = 0;
-        interval.current = setInterval(() => {
-            if (idx === path.length)
-                stop();
-            setActiveId(path[idx]);
-            idx++;
-        }, fps);
-    };
-    const stop = () => {
+    const [currentStep, setStep] = m$1(0);
+    const reset = T$1(() => {
+        setStep(0);
+        setActiveId(path[0]);
+    }, [path[0]]);
+    const stop = T$1(() => {
         if (!interval.current)
             return;
         clearInterval(interval.current);
         interval.current = null;
-    };
+    }, []);
+    const run = T$1(() => {
+        stop();
+        reset();
+        let idx = 0;
+        interval.current = setInterval(() => {
+            if (idx === path.length - 1)
+                stop();
+            setActiveId(path[idx]);
+            idx++;
+            setStep(i => ++i);
+        }, fps);
+    }, [fps, reset, path]);
     l(() => {
         stop();
-        setActiveId(path[0]);
+        reset();
     }, [path]);
-    return { activeId, run, stop };
+    return { activeId, currentStep, run, stop };
 }
 
 // genreate initial grid instance
 // prettier-ignore
-const source = new Grid(10 /* width */, 10 /* height */, 0.2 /* proximity */, 0 /* input index */, 9 /* output index */);
+const source = new Grid(15 /* width */, 15 /* height */, 0.2 /* proximity */, 0 /* input index */, 15 /* output index */);
 // set up the graph on the grid basis
 const graph = new Graph(source.instance);
 // calculate the shortest path
-const dfs = new Dfs(graph.instance, '0,0' /* top left */, '9,10' /* bottom right */);
+const dfs = new Dfs(graph.instance, '0,0' /* top left */, '14,15' /* bottom right */);
 const Root = () => {
     const [grid, setGrid] = m$1(source.instance);
     const [path, setPath] = m$1(dfs.instance);
-    const { activeId, run } = usePath(path);
+    const { activeId, currentStep, run } = usePath(path);
     l(() => {
         graph.createFrom(grid);
         dfs.search(graph.instance);
@@ -186,8 +212,8 @@ const Root = () => {
         setGrid(source.createGrid());
     }, []);
     return (h(d, null,
-        h("button", { onClick: createGrid }, "generate"),
-        h("button", { onClick: run }, "run"),
+        h(Actions, { onRun: run, onCreate: createGrid }),
+        h(Legend, { success: dfs.success, currentStep: currentStep, activeCellId: activeId }),
         h(Grid$1, { source: grid, inputCellId: dfs.input, outputCellId: dfs.output, activeCellId: activeId })));
 };
 var Root$1 = C$1(Root);

@@ -1,5 +1,5 @@
 import css from './styles/grid.mod.css';
-import { h, FunctionComponent } from 'preact';
+import { h, FunctionComponent as FC } from 'preact';
 import { memo } from 'preact/compat';
 
 import Cell from './cell';
@@ -13,7 +13,7 @@ type TProps = {
   activeCellId?: string;
 };
 
-const GridCells: FunctionComponent<TProps> = ({
+const GridCells: FC<TProps> = ({
   source,
   activeCellId,
   inputCellId,
