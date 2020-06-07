@@ -1,17 +1,20 @@
 import { useState, useRef, useEffect, useCallback } from 'preact/hooks';
 
-const defaultFps = 80;
+const defaultFps = 15;
 
-export default function usePath(path: string[] = [], fps: number = defaultFps) {
+export default function usePath(path: Set<string>, fps: number = defaultFps) {
   const interval = useRef<NodeJS.Timeout | null>(null);
+  const inputCellId = path.values().next().value;
 
-  const [activeId, setActiveId] = useState<string>(path[0]);
+  const [activeId, setActiveId] = useState<string>(inputCellId);
   const [currentStep, setStep] = useState<number>(0);
+  const [isDone, done] = useState<boolean>(false);
 
   const reset = useCallback(() => {
     setStep(0);
-    setActiveId(path[0]);
-  }, [path[0]]);
+    setActiveId(inputCellId);
+    done(false);
+  }, [inputCellId]);
 
   const stop = useCallback(() => {
     if (!interval.current) return;
@@ -20,16 +23,25 @@ export default function usePath(path: string[] = [], fps: number = defaultFps) {
   }, []);
 
   const run = useCallback(() => {
+    // reset everything on the first iteration
     stop();
     reset();
-    let idx = 0;
+    const iterator = path.values();
 
     interval.current = setInterval(() => {
-      if (idx === path.length - 1) stop();
-      setActiveId(path[idx]);
-      idx++;
+      // get the next cell item
+      const nextCell = iterator.next().value;
       setStep(i => ++i);
-    }, fps);
+
+      // quit the interval if there is no next item
+      if (!nextCell) {
+        done(true);
+        stop();
+      } else {
+        // go to the next iteration
+        setActiveId(nextCell);
+      }
+    }, 1000 / fps);
   }, [fps, reset, path]);
 
   useEffect(() => {
@@ -37,5 +49,5 @@ export default function usePath(path: string[] = [], fps: number = defaultFps) {
     reset();
   }, [path]);
 
-  return { activeId, currentStep, run, stop };
+  return { activeId, currentStep, run, stop, isDone };
 }

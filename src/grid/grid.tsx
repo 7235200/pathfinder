@@ -9,6 +9,8 @@ const rem = 20;
 
 type TProps = {
   source: TGridInstance;
+  isDone: boolean;
+  path: Set<string>;
   inputCellId?: string;
   outputCellId?: string;
   activeCellId?: string;
@@ -16,18 +18,19 @@ type TProps = {
 
 const GridCells: FC<TProps> = ({
   source,
+  isDone,
+  path,
   activeCellId,
   inputCellId,
   outputCellId
-}) => {
-  return (
-    <svg
-      width={source[0].length * rem}
-      height={source.length * rem}
-      className={css.grid}
-    >
-      {// prettier-ignore
-      source.map((height, y) => height.map((value, x) => {
+}) => (
+  <svg
+    width={source[0].length * rem}
+    height={source.length * rem}
+    className={css.grid}
+  >
+    {// prettier-ignore
+    source.map((height, y) => height.map((value, x) => {
           const id = chordsToId(x, y);
 
           return (
@@ -35,6 +38,7 @@ const GridCells: FC<TProps> = ({
               key={id}
               {...{ x, y, rem }}
               isBlocked={Boolean(value)}
+              isVisited={isDone && path.has(id)}
               isActive={id === activeCellId}
               isInput={id === inputCellId}
               isOutput={id === outputCellId}
@@ -42,9 +46,8 @@ const GridCells: FC<TProps> = ({
           );
         })
       )}
-    </svg>
-  );
-};
+  </svg>
+);
 
 export default memo(GridCells);
 

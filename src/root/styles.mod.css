@@ -1,3 +1,9 @@
 .container {
     display: flex;
+    padding: 1rem;
+}
+
+.static {
+    max-width: 15rem;
+    margin-right: 1rem;
 }
