@@ -31,16 +31,16 @@ export default function usePath(path: Set<string>, fps: number = defaultFps) {
     interval.current = setInterval(() => {
       // get the next cell item
       const nextCell = iterator.next().value;
+      setStep(i => ++i);
 
       // quit the interval if there is no next item
       if (!nextCell) {
         done(true);
         stop();
+      } else {
+        // go to the next iteration
+        setActiveId(nextCell);
       }
-
-      // go to next iteration
-      setActiveId(nextCell);
-      setStep(i => ++i);
     }, 1000 / fps);
   }, [fps, reset, path]);
 

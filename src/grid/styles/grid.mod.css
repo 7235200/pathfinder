@@ -1,4 +1,6 @@
 .grid {
     flex-shrink: 0;
-    margin-right: 2rem;
+    margin-right: 1rem;
+    border: 1rem solid lightgrey;
+    overflow: hidden;
 }

@@ -23,15 +23,14 @@ const GridCells: FC<TProps> = ({
   activeCellId,
   inputCellId,
   outputCellId
-}) => {
-  return (
-    <svg
-      width={source[0].length * rem}
-      height={source.length * rem}
-      className={css.grid}
-    >
-      {// prettier-ignore
-      source.map((height, y) => height.map((value, x) => {
+}) => (
+  <svg
+    width={source[0].length * rem}
+    height={source.length * rem}
+    className={css.grid}
+  >
+    {// prettier-ignore
+    source.map((height, y) => height.map((value, x) => {
           const id = chordsToId(x, y);
 
           return (
@@ -47,9 +46,8 @@ const GridCells: FC<TProps> = ({
           );
         })
       )}
-    </svg>
-  );
-};
+  </svg>
+);
 
 export default memo(GridCells);
 

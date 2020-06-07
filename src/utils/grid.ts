@@ -51,8 +51,9 @@ export default class Grid {
 
     // make sure input cells are opened
     grid[0][inputIndex] = 0;
+
     // make sure output cells are opened
-    grid[sourceHeight - 1][outputIndex] = 0;
+    grid[sourceHeight][outputIndex - 1] = 0;
 
     this.instance = grid;
     return grid;
