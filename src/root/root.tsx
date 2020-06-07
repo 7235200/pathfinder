@@ -77,7 +77,7 @@ const Root = () => {
         <p>or trigger the dfs search</p>
 
         <Legend
-          title="graph"
+          title="dfs"
           currentStep={currentStep}
           activeCellId={activeId}
         />

@@ -51,6 +51,9 @@ export default function useManualPath(
       }
     };
 
+    // reattach listener
+    document.addEventListener('keydown', handler);
+
     // go to the next cell
     path.current.add(activeId);
     setStep(i => ++i);
@@ -59,11 +62,9 @@ export default function useManualPath(
     if (activeId === outputIndex) {
       done(true);
       document.removeEventListener('keydown', handler);
-    } else {
-      // reattach listener
-      document.addEventListener('keydown', handler);
     }
 
+    // cleanup
     return () => document.removeEventListener('keydown', handler);
   }, [activeId]);
 
