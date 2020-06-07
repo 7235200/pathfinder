@@ -5,13 +5,14 @@ export default class Dfs {
   input: string;
   output: string;
   success: boolean;
-  instance?: string[];
+  instance: Set<string>;
 
   constructor(graph: TGraphInstance, input: string, output: string) {
     this.graph = graph;
     this.input = input;
     this.output = output;
     this.success = false;
+    this.instance = new Set();
     this.search();
   }
 
@@ -24,7 +25,7 @@ export default class Dfs {
     visited.add(input);
 
     if (input === output) {
-      this.instance = Array.from(visited);
+      this.instance = visited;
       this.success = true;
       return input;
     }
@@ -40,7 +41,7 @@ export default class Dfs {
       }
     }
 
-    this.instance = Array.from(visited);
+    this.instance = visited;
     this.success = false;
     return null;
   }

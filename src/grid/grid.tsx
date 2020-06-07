@@ -9,6 +9,8 @@ const rem = 20;
 
 type TProps = {
   source: TGridInstance;
+  isDone: boolean;
+  path: Set<unknown>;
   inputCellId?: string;
   outputCellId?: string;
   activeCellId?: string;
@@ -16,6 +18,8 @@ type TProps = {
 
 const GridCells: FC<TProps> = ({
   source,
+  isDone,
+  path,
   activeCellId,
   inputCellId,
   outputCellId
@@ -35,6 +39,7 @@ const GridCells: FC<TProps> = ({
               key={id}
               {...{ x, y, rem }}
               isBlocked={Boolean(value)}
+              isVisited={isDone && path.has(id)}
               isActive={id === activeCellId}
               isInput={id === inputCellId}
               isOutput={id === outputCellId}

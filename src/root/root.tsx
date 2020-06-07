@@ -1,6 +1,6 @@
 import css from './styles.mod.css';
 import { h } from 'preact';
-import { useState, useCallback, useEffect } from 'preact/hooks';
+import { useState, useCallback, useMemo } from 'preact/hooks';
 import { memo } from 'preact/compat';
 
 import Graph from '~/utils/graph';
@@ -12,31 +12,36 @@ import Legend from '~/legend';
 import usePath from './usePath';
 
 // genreate initial grid instance
+// prettier-ignore
 const source = new GridSource(
-  25 /* width */,
-  25 /* height */,
-  0.3 /* proximity */,
-  0 /* input index */,
-  25 /* output index */
+  15   /* width */,
+  15   /* height */,
+  0.3  /* proximity */,
+  0    /* input index */,
+  15   /* output index */
 );
 
 // set up the graph on the grid basis
 const graph = new Graph(source.instance);
 
 // calculate the shortest path
+// prettier-ignore
 const dfs = new Dfs(
   graph.instance,
-  '0,0' /* top left */,
-  '24,25' /* bottom right */
+  '0,0'   /* top left */,
+  '14,15' /* bottom right */
 );
+
+// try 5 times to generate the grid with a proper way out
+const createGridAttempts = 5;
 
 const Root = () => {
   const [path, setPath] = useState(dfs.instance);
-  const { activeId, currentStep, run } = usePath(path);
+  const { activeId, currentStep, run, isDone } = usePath(path);
 
   const create = useCallback(() => {
     let success = false;
-    let attempts = 5;
+    let attempts = createGridAttempts;
 
     while (!success && attempts > 0) {
       const grid = source.createGrid();
@@ -52,6 +57,7 @@ const Root = () => {
   return (
     <section className={css.container}>
       <Grid
+        {...{ isDone, path }}
         source={source.instance}
         inputCellId={dfs.input}
         outputCellId={dfs.output}

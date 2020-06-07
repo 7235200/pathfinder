@@ -1,7 +1,6 @@
 .node {
     --node-background-color: white;
     fill: var(--node-background-color);
-    stroke: white;
     transition: fill .2s ease-in;
 }
 
@@ -11,6 +10,7 @@
 
 .node[data-active="true"] {
     --node-background-color: blue;
+    transition: fill .1s ease-in;
 }
 
 .node[data-input="true"] {
@@ -18,5 +18,9 @@
 }
 
 .node[data-output="true"] {
+    --node-background-color: lightblue;
+}
+
+.node[data-visited="true"] {
     --node-background-color: lightblue;
 }
