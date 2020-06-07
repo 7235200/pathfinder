@@ -8,19 +8,29 @@ import { TGridInstance } from '~/utils/grid';
 const rem = 20;
 
 type TProps = {
-  source: TGridInstance;
-  isDone: boolean;
   path: Set<string>;
+  isDone: boolean;
+  activeCellId?: string;
+
+  manualPath: Set<string>;
+  manualIsDone: boolean;
+  manualActiveId?: string;
+
+  source: TGridInstance;
   inputCellId?: string;
   outputCellId?: string;
-  activeCellId?: string;
 };
 
 const GridCells: FC<TProps> = ({
   source,
-  isDone,
   path,
+  isDone,
   activeCellId,
+
+  manualPath,
+  manualActiveId,
+  manualIsDone,
+
   inputCellId,
   outputCellId
 }) => (
@@ -38,8 +48,13 @@ const GridCells: FC<TProps> = ({
               key={id}
               {...{ x, y, rem }}
               isBlocked={Boolean(value)}
+
               isVisited={isDone && path.has(id)}
               isActive={id === activeCellId}
+
+              isManualActive={id===manualActiveId}
+              isManualVisited={manualIsDone && manualPath.has(id)}
+
               isInput={id === inputCellId}
               isOutput={id === outputCellId}
             />

@@ -1,11 +1,11 @@
 html, 
 body {
     height: 100%;
+    margin: 0;
 }
 
 body {
     font-size: 14px;
     text-rendering: optimizeLegibility;
     font-family: "-apple-system","Segoe UI",Arial,sans-serif;
-    margin: 0;
 }

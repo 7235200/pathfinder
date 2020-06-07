@@ -5,7 +5,7 @@ type TProps = { onCreate(): void; onRun(): void };
 
 const Actions: FC<TProps> = ({ onCreate, onRun }) => (
   <Fragment>
-    <button className={css.action} onClick={onCreate} children="generate" />
+    <button className={css.action} onClick={onCreate} children="generate grid" />
     <button className={css.action} onClick={onRun} children="run" />
   </Fragment>
 );

@@ -10,6 +10,8 @@ type TCellProps = {
   isBlocked: boolean;
   isActive: boolean;
   isVisited: boolean;
+  isManualActive: boolean;
+  isManualVisited: boolean;
 };
 
 const Cell: FC<TCellProps> = ({
@@ -21,6 +23,8 @@ const Cell: FC<TCellProps> = ({
   isInput,
   isOutput,
   isVisited,
+  isManualActive,
+  isManualVisited
 }) => (
   <rect
     height={rem}
@@ -32,6 +36,8 @@ const Cell: FC<TCellProps> = ({
     data-input={isInput}
     data-output={isOutput}
     data-visited={isVisited}
+    data-manual-active={isManualActive}
+    data-manual-visited={isManualVisited}
     className={css.node}
   />
 );
