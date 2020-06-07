@@ -10,7 +10,7 @@ const rem = 20;
 type TProps = {
   source: TGridInstance;
   isDone: boolean;
-  path: Set<unknown>;
+  path: Set<string>;
   inputCellId?: string;
   outputCellId?: string;
   activeCellId?: string;
