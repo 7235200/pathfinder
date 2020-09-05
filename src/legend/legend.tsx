@@ -8,9 +8,10 @@ type TProps = {
   currentStep: number;
 };
 
-const Legend: FC<TProps> = ({ title, activeCellId, currentStep }) => (
+const Legend: FC<TProps> = ({ title, activeCellId, currentStep, children }) => (
   <legend className={css.container}>
     <h3 children={title} />
+    {children}
     <Node dt="active cell" dd={activeCellId} />
     <Node dt="total steps" dd={currentStep} />
   </legend>

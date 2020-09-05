@@ -5,8 +5,8 @@ import { memo, useEffect } from 'preact/compat';
 import GridSource from '~/utils/grid';
 import useGraph from '~/utils/useGraph';
 
+import Button from '~/button';
 import Grid from '~/grid';
-import Actions from '~/actions';
 import ManualPath, { useManualPath } from '~/manual';
 import DfsPath, { useDfsPath } from '~/dfs';
 import Legend from '~/legend';
@@ -37,7 +37,7 @@ const Root = () => {
   return (
     <section className={css.container}>
       <Static>
-        <Actions onRun={dfs.run} onCreate={graph.create} />
+        <Button children="Generate grid" onClick={graph.create} />
         <Legend
           title="manual"
           activeCellId={manual.activeIdx}
@@ -47,7 +47,10 @@ const Root = () => {
           title="dfs"
           activeCellId={dfs.activeIdx}
           currentStep={dfs.currentStep}
-        />
+        >
+          <Button children="run" onClick={dfs.run} />
+          <Button children="stop" onClick={dfs.stop} />
+        </Legend>
       </Static>
 
       <Grid
