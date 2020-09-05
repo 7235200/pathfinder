@@ -1,7 +1,7 @@
 import { h } from 'preact';
 
-import { Path } from '~/Grid';
-import { useEffect, useState } from 'preact/hooks';
+import { Path } from '~/grid';
+import { useEffect } from 'preact/hooks';
 
 type TProps = {
   path: Set<string>;

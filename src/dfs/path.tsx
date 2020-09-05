@@ -1,6 +1,6 @@
 import { h } from 'preact';
 
-import { Path } from '~/Grid';
+import { Path } from '~/grid';
 
 type TProps = { path: Set<string>; activeIdx: string; outputIdx: string };
 
