@@ -4,17 +4,15 @@ const defaultFps = 15;
 
 export default function usePath(path: Set<string>, fps: number = defaultFps) {
   const interval = useRef<NodeJS.Timeout | null>(null);
-  const inputCellId = path.values().next().value;
+  const inputIdx = path.values().next().value;
 
-  const [activeId, setActiveId] = useState<string>(inputCellId);
+  const [activeIdx, setActiveIdx] = useState<string>(inputIdx);
   const [currentStep, setStep] = useState<number>(0);
-  const [isDone, done] = useState<boolean>(false);
 
   const reset = useCallback(() => {
     setStep(0);
-    setActiveId(inputCellId);
-    done(false);
-  }, [inputCellId]);
+    setActiveIdx(inputIdx);
+  }, [inputIdx]);
 
   const stop = useCallback(() => {
     if (!interval.current) return;
@@ -30,16 +28,15 @@ export default function usePath(path: Set<string>, fps: number = defaultFps) {
 
     interval.current = setInterval(() => {
       // get the next cell item
-      const nextCell = iterator.next().value;
-      setStep(i => ++i);
+      const nextIdx = iterator.next().value;
+      setStep((i) => ++i);
 
       // quit the interval if there is no next item
-      if (!nextCell) {
-        done(true);
+      if (!nextIdx) {
         stop();
       } else {
         // go to the next iteration
-        setActiveId(nextCell);
+        setActiveIdx(nextIdx);
       }
     }, 1000 / fps);
   }, [fps, reset, path]);
@@ -49,5 +46,5 @@ export default function usePath(path: Set<string>, fps: number = defaultFps) {
     reset();
   }, [path]);
 
-  return { activeId, currentStep, run, stop, isDone };
+  return { activeIdx, currentStep, run, stop };
 }

@@ -1,82 +1,77 @@
-import { useRef, useEffect, useState } from 'preact/hooks';
+import { useRef, useEffect, useState, useCallback } from 'preact/hooks';
 import { TGraphInstance } from '~/utils/graph';
 
-type TPath = Set<string>;
+export type TPath = Set<string>;
 
-const keys = {
-  left: 37,
-  up: 38,
-  right: 39,
-  down: 40
-};
+const keys = { left: 37, up: 38, right: 39, down: 40 };
 
 export default function useManualPath(
-  initialCellId: string,
   graph: TGraphInstance,
-  outputIndex: string
+  inputIdx: string,
+  outputIdx: string
 ) {
-  const [activeId, setActiveId] = useState<string>(initialCellId);
+  const [activeIdx, setActiveIdx] = useState<string>(inputIdx);
   const path = useRef<TPath>(new Set());
   const [currentStep, setStep] = useState<number>(0);
-  const [isDone, done] = useState<boolean>(false);
 
-  useEffect(() => {
-    // listener callback
-    const handler = (evt: KeyboardEvent) => {
-      const activeCell = activeId.split(',').map(Number);
-      const activeGraphNode = graph.get(activeId);
+  // listener callback
+  const handler = useCallback(
+    (evt: KeyboardEvent) => {
+      const activeCell = activeIdx.split(',').map(Number);
+      const activeGraphNode = graph.get(activeIdx);
 
       // right
       if (evt.keyCode === keys.right) {
         const nextCell = toRight(activeCell);
-        if (activeGraphNode?.has(nextCell)) setActiveId(nextCell);
+        if (activeGraphNode?.has(nextCell)) setActiveIdx(nextCell);
       }
 
       // down
       if (evt.keyCode === keys.down) {
         const nextCell = toDown(activeCell);
-        if (activeGraphNode?.has(nextCell)) setActiveId(nextCell);
+        if (activeGraphNode?.has(nextCell)) setActiveIdx(nextCell);
       }
 
       // left
       if (evt.keyCode === keys.left) {
         const nextCell = toLeft(activeCell);
-        if (activeGraphNode?.has(nextCell)) setActiveId(nextCell);
+        if (activeGraphNode?.has(nextCell)) setActiveIdx(nextCell);
       }
 
       // left
       if (evt.keyCode === keys.up) {
         const nextCell = toUp(activeCell);
-        if (activeGraphNode?.has(nextCell)) setActiveId(nextCell);
+        if (activeGraphNode?.has(nextCell)) setActiveIdx(nextCell);
       }
-    };
+    },
+    [activeIdx]
+  );
 
+  useEffect(() => {
     // reattach listener
     document.addEventListener('keydown', handler);
 
     // go to the next cell
-    path.current.add(activeId);
-    setStep(i => ++i);
+    path.current.add(activeIdx);
+    setStep((i) => ++i);
 
     // reaches the traget
-    if (activeId === outputIndex) {
-      done(true);
+    if (activeIdx === outputIdx) {
       document.removeEventListener('keydown', handler);
     }
 
     // cleanup
     return () => document.removeEventListener('keydown', handler);
-  }, [activeId]);
+  }, [handler]);
 
   // reset state for the new graph
   useEffect(() => {
     setStep(0);
-    done(false);
     path.current.clear();
-    setActiveId(initialCellId);
+    setActiveIdx(inputIdx);
   }, [graph]);
 
-  return { activeId, path: path.current, currentStep, isDone };
+  return { activeIdx, path: path.current, currentStep };
 }
 
 type TNodeId = number[];

@@ -1,0 +1,31 @@
+.node {
+    --node-background-color: transparent;
+    fill: var(--node-background-color);
+    transition: fill .2s ease-in;
+}
+
+.node[data-theme="grid"][data-active="true"] {
+    --node-background-color: lightgrey;
+}
+
+.node[data-theme="io"][data-active="true"] {
+    --node-background-color: #43729c;
+}
+
+.node[data-theme="manual"][data-active="true"] {
+    transition: unset;
+    --node-background-color: lightblue;
+}
+
+.node[data-theme="manual"][data-visited="true"] {
+    --node-background-color: lightblue;
+}
+
+.node[data-theme="dfs"][data-active="true"] {
+    transition: unset;
+    --node-background-color: #118a92;
+}
+
+.node[data-theme="dfs"][data-visited="true"] {
+    --node-background-color: #118a92;
+}
