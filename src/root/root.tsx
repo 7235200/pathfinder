@@ -48,6 +48,7 @@ const Root = () => {
           activeCellId={dfs.activeIdx}
           currentStep={dfs.currentStep}
         >
+          <p>the run starts as far as you make the first move</p>
           <Button children="run" onClick={dfs.run} />
           <Button children="stop" onClick={dfs.stop} />
         </Legend>
@@ -62,6 +63,7 @@ const Root = () => {
         <ManualPath
           path={manual.path}
           activeIdx={manual.activeIdx}
+          onStart={dfs.run}
           {...{ outputIdx }}
         />
       </Grid>
@@ -74,7 +76,7 @@ export default memo(Root);
 const Static: FC = ({ children }) => (
   <div className={css.static}>
     <h1>pathfinder</h1>
-    <p>find the shortest way from the top left to the bottom right</p>
+    <p>Find the shortest way from the top left to the bottom right.</p>
     {children}
   </div>
 );
