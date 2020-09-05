@@ -1,0 +1,31 @@
+.node {
+    --node-background-color: transparent;
+    fill: var(--node-background-color);
+    transition: fill .2s ease-in;
+}
+
+.node[data-theme="grid"][data-active="true"] {
+    --node-background-color: lightgrey;
+}
+
+.node[data-theme="io"][data-active="true"] {
+    --node-background-color: #43729c;
+}
+
+.node[data-theme="manual"][data-active="true"] {
+    transition: unset;
+    --node-background-color: rgba(23,113,130, 0.7);
+}
+
+.node[data-theme="manual"][data-visited="true"] {
+    --node-background-color: rgba(23,113,130,.5);
+}
+
+.node[data-theme="dfs"][data-active="true"] {
+    transition: unset;
+    --node-background-color: rgb(68,125,160);
+}
+
+.node[data-theme="dfs"][data-visited="true"] {
+    --node-background-color: rgba(68,125,160,.5);
+}

@@ -3,16 +3,17 @@ import { h, FunctionComponent as FC } from 'preact';
 import { memo } from 'preact/compat';
 
 type TProps = {
+  title: string;
   activeCellId: string;
   currentStep: number;
-  success: boolean;
 };
 
-const Legend: FC<TProps> = ({ activeCellId, currentStep, success }) => (
+const Legend: FC<TProps> = ({ title, activeCellId, currentStep, children }) => (
   <legend className={css.container}>
-    {!success && <div className={css.error}>no way out</div>}
+    <h3 children={title} />
     <Node dt="active cell" dd={activeCellId} />
     <Node dt="total steps" dd={currentStep} />
+    {children}
   </legend>
 );
 

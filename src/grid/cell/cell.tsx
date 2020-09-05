@@ -1,36 +1,32 @@
-import css from './styles/cell.mod.css';
+import css from './cell.mod.css';
 import { h, FunctionComponent as FC } from 'preact';
+
+export type TCellTheme = 'manual' | 'dfs' | 'io' | 'grid';
 
 type TCellProps = {
   x: number;
   y: number;
-  rem: number;
-  isInput: boolean;
-  isOutput: boolean;
-  isBlocked: boolean;
+  rem?: number;
   isActive: boolean;
-  isVisited: boolean;
+  isVisited?: boolean;
+  theme: TCellTheme;
 };
 
 const Cell: FC<TCellProps> = ({
   x,
   y,
-  rem,
-  isBlocked,
+  rem = 20,
   isActive,
-  isInput,
-  isOutput,
   isVisited,
+  theme,
 }) => (
   <rect
     height={rem}
     width={rem}
     x={x * rem}
     y={y * rem}
-    data-blocked={isBlocked}
+    data-theme={theme}
     data-active={isActive}
-    data-input={isInput}
-    data-output={isOutput}
     data-visited={isVisited}
     className={css.node}
   />

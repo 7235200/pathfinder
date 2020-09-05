@@ -1,16 +1,15 @@
 import css from './styles.mod.css';
 import { h, FunctionComponent as FC } from 'preact';
-import { useState, useCallback } from 'preact/hooks';
-import { memo } from 'preact/compat';
+import { memo, useEffect } from 'preact/compat';
 
-import Graph from '~/utils/graph';
-import Dfs from '~/utils/dfs';
 import GridSource from '~/utils/grid';
+import useGraph from '~/utils/useGraph';
+
 import Grid from '~/grid';
+import { useManualPath } from '~/manual';
+import { useDfsPath } from '~/dfs';
+import Aside from '~/aside';
 import Print from '~/print';
-import Actions from '~/actions';
-import Legend from '~/legend';
-import usePath from './usePath';
 
 // genreate initial grid instance
 // prettier-ignore
@@ -22,69 +21,29 @@ const source = new GridSource(
   20   /* output index */
 );
 
-// set up the graph on the grid basis
-const graph = new Graph(source.instance);
-
-// calculate the shortest path
-// prettier-ignore
-const dfs = new Dfs(
-  graph.instance,
-  '0,0'    /* top left */,
-  '19,20'  /* bottom right */
-);
-
-// try 5 times to generate the grid with a proper way out
-const createGridAttempts = 5;
+const inputIdx = '0,0';
+const outputIdx = '19,20';
 
 const Root = () => {
-  const [path, setPath] = useState(dfs.instance);
-  const { activeId, currentStep, run, isDone } = usePath(path);
+  const graph = useGraph(source);
+  const dfs = useDfsPath(graph.instance, inputIdx, outputIdx);
+  const manual = useManualPath(graph.instance, inputIdx, outputIdx);
 
-  const create = useCallback(() => {
-    let success = false;
-    let attempts = createGridAttempts;
-
-    while (!success && attempts > 0) {
-      const grid = source.createGrid();
-      graph.createFrom(grid);
-      dfs.search(graph.instance);
-      success = dfs.success;
-      attempts--;
-    }
-
-    setPath(dfs.instance);
-  }, []);
+  useEffect(() => {
+    // recreate graph until we have a way out
+    if (!dfs.success) graph.create();
+  }, [dfs.path]);
 
   return (
     <section className={css.container}>
-      <Static>
-        <Actions onRun={run} onCreate={create} />
-        <Legend
-          success={dfs.success}
-          currentStep={currentStep}
-          activeCellId={activeId}
-        />
-      </Static>
-
+      <Aside {...{ dfs, manual, graph }} />
       <Grid
-        {...{ isDone, path }}
         source={source.instance}
-        inputCellId={dfs.input}
-        outputCellId={dfs.output}
-        activeCellId={activeId}
+        {...{ inputIdx, outputIdx, dfs, manual }}
       />
-
       <Print graph={graph.instance} />
     </section>
   );
 };
 
 export default memo(Root);
-
-const Static: FC = ({ children }) => (
-  <div className={css.static}>
-    <h1>pathfinder</h1>
-    <p>it finds the shortest way from the top left to the bottom right</p>
-    {children}
-  </div>
-);

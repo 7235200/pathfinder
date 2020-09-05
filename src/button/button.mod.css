@@ -1,15 +1,16 @@
-.action {
+.button {
     cursor: pointer;
     background: white;
     border: 1px solid lightgray;
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
+    margin: 0.5rem 0;
 }
 
-.action:hover {
+.button:hover {
     opacity: .7;
 }
 
-.action:not(:last-of-type) {
+.button:not(:last-of-type) {
     margin-right: 0.25rem;
 }
