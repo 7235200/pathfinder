@@ -9,3 +9,4 @@ __todo__
 - run speed option
 - manual option for inpuIdx, outputIdx
 - normalize inpuIdx, outputIdx
+- number of manual steps before the algorithm starts the run

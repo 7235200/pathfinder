@@ -11,11 +11,9 @@ type TProps = {
 };
 
 const ManualPath = ({ path, activeIdx, outputIdx, onStart }: TProps) => {
-  const isFirstStep = path.values().next().value === activeIdx;
-
   useEffect(() => {
-    if (isFirstStep) onStart();
-  }, [isFirstStep]);
+    onStart();
+  }, [path.size > 0]);
 
   return <Path theme="manual" {...{ path, activeIdx, outputIdx }} />;
 };
