@@ -9,6 +9,7 @@ import Grid from '~/grid';
 import { useManualPath } from '~/manual';
 import { useDfsPath } from '~/dfs';
 import Aside from '~/aside';
+import Print from '~/print';
 
 // genreate initial grid instance
 // prettier-ignore
@@ -40,6 +41,7 @@ const Root = () => {
         source={source.instance}
         {...{ inputIdx, outputIdx, dfs, manual }}
       />
+      <Print graph={graph.instance} />
     </section>
   );
 };

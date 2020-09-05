@@ -10,3 +10,4 @@ __todo__
 - manual option for inpuIdx, outputIdx
 - normalize inpuIdx, outputIdx
 - number of manual steps before the algorithm starts the run
+- tests
