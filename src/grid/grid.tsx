@@ -1,37 +1,29 @@
-import css from './grid.mod.css';
-
-import { h, FunctionComponent as FC, Fragment } from 'preact';
+import { h } from 'preact';
 import { memo } from 'preact/compat';
 
-import { GridCells } from './common';
-import Cell from './cell';
+import Frame from './frame';
+import ManualPath, { useManualPath } from '~/manual';
+import DfsPath, { useDfsPath } from '~/dfs';
 import { TGridInstance } from '~/utils/grid';
-import { cellIdToChords } from './common';
-
-const rem = 20;
 
 type TProps = {
+  dfs: ReturnType<typeof useDfsPath>;
+  manual: ReturnType<typeof useManualPath>;
   source: TGridInstance;
-  inputCellId: string;
-  outputCellId: string;
+  inputIdx: string;
+  outputIdx: string;
 };
 
-const Grid: FC<TProps> = ({ source, inputCellId, outputCellId, children }) => {
-  const [inputX, inputY] = cellIdToChords(inputCellId);
-  const [outputX, outputY] = cellIdToChords(outputCellId);
-
-  return (
-    <svg
-      width={source[0].length * rem}
-      height={source.length * rem}
-      className={css.grid}
-    >
-      <Cell theme="io" x={inputX} y={inputY} isActive />
-      <GridCells {...{ source }} />
-      {children}
-      <Cell theme="io" x={outputX} y={outputY} isActive />
-    </svg>
-  );
-};
+const Grid = ({ dfs, manual, source, inputIdx, outputIdx }: TProps) => (
+  <Frame {...{ source }} inputCellId={inputIdx} outputCellId={outputIdx}>
+    <DfsPath path={dfs.path} activeIdx={dfs.activeIdx} {...{ outputIdx }} />
+    <ManualPath
+      path={manual.path}
+      activeIdx={manual.activeIdx}
+      onStart={dfs.run}
+      {...{ outputIdx }}
+    />
+  </Frame>
+);
 
 export default memo(Grid);

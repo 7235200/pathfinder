@@ -5,11 +5,10 @@ import { memo, useEffect } from 'preact/compat';
 import GridSource from '~/utils/grid';
 import useGraph from '~/utils/useGraph';
 
-import Button from '~/button';
 import Grid from '~/grid';
-import ManualPath, { useManualPath } from '~/manual';
-import DfsPath, { useDfsPath } from '~/dfs';
-import Legend from '~/legend';
+import { useManualPath } from '~/manual';
+import { useDfsPath } from '~/dfs';
+import Aside from '~/aside';
 
 // genreate initial grid instance
 // prettier-ignore
@@ -36,47 +35,13 @@ const Root = () => {
 
   return (
     <section className={css.container}>
-      <Static>
-        <Button children="Generate grid" onClick={graph.create} />
-        <Legend
-          title="manual"
-          activeCellId={manual.activeIdx}
-          currentStep={manual.currentStep}
-        />
-        <Legend
-          title="dfs"
-          activeCellId={dfs.activeIdx}
-          currentStep={dfs.currentStep}
-        >
-          <p>the run starts as far as you make the first move</p>
-          <Button children="run" onClick={dfs.run} />
-          <Button children="stop" onClick={dfs.stop} />
-        </Legend>
-      </Static>
-
+      <Aside {...{ dfs, manual, graph }} />
       <Grid
         source={source.instance}
-        inputCellId={inputIdx}
-        outputCellId={outputIdx}
-      >
-        <DfsPath path={dfs.path} activeIdx={dfs.activeIdx} {...{ outputIdx }} />
-        <ManualPath
-          path={manual.path}
-          activeIdx={manual.activeIdx}
-          onStart={dfs.run}
-          {...{ outputIdx }}
-        />
-      </Grid>
+        {...{ inputIdx, outputIdx, dfs, manual }}
+      />
     </section>
   );
 };
 
 export default memo(Root);
-
-const Static: FC = ({ children }) => (
-  <div className={css.static}>
-    <h1>pathfinder</h1>
-    <p>Find the shortest way from the top left to the bottom right.</p>
-    {children}
-  </div>
-);
