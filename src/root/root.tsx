@@ -1,14 +1,15 @@
 import css from './styles.mod.css';
 import { h, FunctionComponent as FC } from 'preact';
-import { memo } from 'preact/compat';
+import { memo, useEffect } from 'preact/compat';
 
 import GridSource from '~/utils/grid';
 import useGraph from '~/utils/useGraph';
 
 import Grid from '~/grid';
 import Actions from '~/actions';
-import ManualPath from '~/manual';
+import ManualPath, { useManualPath } from '~/manual';
 import DfsPath, { useDfsPath } from '~/dfs';
+import Legend from '~/legend';
 
 // genreate initial grid instance
 // prettier-ignore
@@ -26,12 +27,27 @@ const outputIdx = '19,20';
 const Root = () => {
   const graph = useGraph(source);
   const dfs = useDfsPath(graph.instance, inputIdx, outputIdx);
+  const manual = useManualPath(graph.instance, inputIdx, outputIdx);
+
+  useEffect(() => {
+    // recreate graph until we have a way out
+    if (!dfs.success) graph.create();
+  }, [dfs.path]);
 
   return (
     <section className={css.container}>
       <Static>
         <Actions onRun={dfs.run} onCreate={graph.create} />
-        {!dfs.success && <p children="no way out" />}
+        <Legend
+          title="manual"
+          activeCellId={manual.activeIdx}
+          currentStep={manual.currentStep}
+        />
+        <Legend
+          title="dfs"
+          activeCellId={dfs.activeIdx}
+          currentStep={dfs.currentStep}
+        />
       </Static>
 
       <Grid
@@ -40,7 +56,11 @@ const Root = () => {
         outputCellId={outputIdx}
       >
         <DfsPath path={dfs.path} activeIdx={dfs.activeIdx} {...{ outputIdx }} />
-        <ManualPath graph={graph.instance} {...{ inputIdx, outputIdx }} />
+        <ManualPath
+          path={manual.path}
+          activeIdx={manual.activeIdx}
+          {...{ outputIdx }}
+        />
       </Grid>
     </section>
   );

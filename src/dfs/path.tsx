@@ -1,5 +1,4 @@
 import { h } from 'preact';
-import { memo } from 'preact/compat';
 
 import { Path } from '~/Grid';
 
@@ -9,4 +8,4 @@ const DfsPath = ({ path, activeIdx, outputIdx }: TProps) => (
   <Path theme="dfs" {...{ path, activeIdx, outputIdx }} />
 );
 
-export default memo(DfsPath);
+export default DfsPath;

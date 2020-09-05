@@ -16,6 +16,6 @@ export default function useDfsPath(
     setPath(dfs.instance);
   }, [graph]);
 
-  const { run, stop, activeIdx } = usePath(path);
-  return { path, run, stop, activeIdx, success: dfs.success };
+  const { run, stop, activeIdx, currentStep } = usePath(path);
+  return { path, run, stop, activeIdx, currentStep, success: dfs.success };
 }

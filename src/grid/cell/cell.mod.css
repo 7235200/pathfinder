@@ -14,18 +14,18 @@
 
 .node[data-theme="manual"][data-active="true"] {
     transition: unset;
-    --node-background-color: lightblue;
+    --node-background-color: rgba(23,113,130, 0.7);
 }
 
 .node[data-theme="manual"][data-visited="true"] {
-    --node-background-color: lightblue;
+    --node-background-color: rgba(23,113,130,.5);
 }
 
 .node[data-theme="dfs"][data-active="true"] {
     transition: unset;
-    --node-background-color: #118a92;
+    --node-background-color: rgb(68,125,160);
 }
 
 .node[data-theme="dfs"][data-visited="true"] {
-    --node-background-color: #118a92;
+    --node-background-color: rgba(68,125,160,.5);
 }

@@ -1,15 +1,11 @@
 import { h } from 'preact';
-import { memo } from 'preact/compat';
-import useManualPath from './useManualPath';
 
 import { Path } from '~/Grid';
-import { TGraphInstance } from '~/utils/graph';
 
-type TProps = { graph: TGraphInstance; inputIdx: string; outputIdx: string };
+type TProps = { path: Set<string>; activeIdx: string; outputIdx: string };
 
-const ManualPath = ({ graph, inputIdx, outputIdx }: TProps) => {
-  const { activeIdx, path } = useManualPath(graph, inputIdx, outputIdx);
-  return <Path theme="manual" {...{ path, activeIdx, outputIdx }} />;
-};
+const ManualPath = ({ path, activeIdx, outputIdx }: TProps) => (
+  <Path theme="manual" {...{ path, activeIdx, outputIdx }} />
+);
 
-export default memo(ManualPath);
+export default ManualPath;
