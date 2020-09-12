@@ -19,7 +19,6 @@ export default function useManualPath(
     (evt: KeyboardEvent) => {
       const activeCell = activeIdx.split(',').map(Number);
       const activeGraphNode = graph.get(activeIdx);
-
       // right
       if (evt.keyCode === keys.right) {
         const nextCell = toRight(activeCell);
@@ -44,7 +43,7 @@ export default function useManualPath(
         if (activeGraphNode?.has(nextCell)) setActiveIdx(nextCell);
       }
     },
-    [activeIdx]
+    [activeIdx, graph]
   );
 
   useEffect(() => {
