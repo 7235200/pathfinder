@@ -2,9 +2,9 @@ import { h, Fragment } from 'preact';
 
 import Cell from '../cell';
 import { TGridInstance } from '~/utils/grid';
-import { isCellUnderWarFog, chordsToCellId, cellIdToChords } from './utils';
+import { getWarFogVision, chordsToCellId, cellIdToChords } from './utils';
 
-const threshold = 5;
+const warForThreshold = 3;
 
 type TProps = {
   source: TGridInstance;
@@ -24,16 +24,15 @@ const GridCells = ({ source, activeIdx, outputCellId }: TProps) => {
               theme="grid"
               key={chordsToCellId(x, y)}
               {...{ x, y }}
-              isActive={
-                // real wall value
-                Boolean(value) ||
-                (
-                  // clear war fog after the path is complete
-                  !isComplete &&
-                  // war fog choords treshold
-                  isCellUnderWarFog(x, y, activeX, activeY, threshold)
-                )
-              }
+              isActive={Boolean(value)}
+              vision={getWarFogVision(
+                x,
+                y,
+                activeX,
+                activeY,
+                warForThreshold,
+                isComplete
+              )}
             />
         )))
       }

@@ -3,30 +3,28 @@ import { memo } from 'preact/compat';
 
 import Frame from './frame';
 import ManualPath, { useManualPath } from '~/manual';
-import DfsPath, { useDfsPath } from '~/dfs';
+import DfsPath from '~/dfs';
 import { TGridInstance } from '~/utils/grid';
+import usePath from '~/utils/usePath';
 
 type TProps = {
-  dfs: ReturnType<typeof useDfsPath>;
+  dfs: ReturnType<typeof usePath>;
   manual: ReturnType<typeof useManualPath>;
   source: TGridInstance;
-  inputIdx: string;
-  outputIdx: string;
+  outputCellId: string;
 };
 
-const Grid = ({ dfs, manual, source, inputIdx, outputIdx }: TProps) => (
-  <Frame
-    {...{ source }}
-    activeIdx={manual.activeIdx}
-    inputCellId={inputIdx}
-    outputCellId={outputIdx}
-  >
-    <DfsPath path={dfs.path} activeIdx={dfs.activeIdx} {...{ outputIdx }} />
+const Grid = ({ dfs, manual, source, outputCellId }: TProps) => (
+  <Frame {...{ source, outputCellId }} activeIdx={manual.activeCellId}>
+    <DfsPath
+      path={dfs.path}
+      activeIdx={dfs.activeIdx}
+      outputIdx={outputCellId}
+    />
     <ManualPath
       path={manual.path}
-      activeIdx={manual.activeIdx}
-      onStart={dfs.run}
-      {...{ outputIdx }}
+      activeIdx={manual.activeCellId}
+      outputIdx={outputCellId}
     />
   </Frame>
 );

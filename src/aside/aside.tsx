@@ -2,25 +2,24 @@ import css from './aside.mod.css';
 import { h, FunctionComponent as FC } from 'preact';
 import { memo } from 'preact/compat';
 
-import type useGraph from '~/utils/useGraph';
-import type { useDfsPath } from '~/dfs';
 import type { useManualPath } from '~/manual';
 
 import Button from '~/button';
 import Legend from '~/legend';
+import usePath from '~/utils/usePath';
 
 type TProps = {
-  graph: ReturnType<typeof useGraph>;
-  dfs: ReturnType<typeof useDfsPath>;
+  dfs: ReturnType<typeof usePath>;
   manual: ReturnType<typeof useManualPath>;
+  create: () => void;
 };
 
-const Aside = ({ graph, manual, dfs }: TProps) => (
+const Aside = ({ manual, dfs, create }: TProps) => (
   <Static>
-    <Button onClick={graph.create}>Generate grid</Button>
+    <Button onClick={create}>Generate grid</Button>
     <Legend
       title="manual"
-      activeCellId={manual.activeIdx}
+      activeCellId={manual.activeCellId}
       currentStep={manual.currentStep}
     />
     <Legend

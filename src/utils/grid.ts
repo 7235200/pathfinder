@@ -1,61 +1,81 @@
-type TValue = 0 | 1;
+import { chordsToCellId } from '~/grid';
+
+enum TValue {
+  open = 0,
+  close = 1,
+}
 export type TGridInstance = TValue[][];
 
-export default class Grid {
-  width: number;
-  height: number;
-  proximity: number;
-  instance: TGridInstance;
-  inputIndex: number;
-  outputIndex: number;
+const getNumberInRange = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
 
-  constructor(
-    width: number,
-    height: number,
-    proximity: number,
-    inputIndex: number,
-    outputIndex: number
-  ) {
-    this.width = width;
-    this.height = height;
+export interface IGrid {
+  inputCellId: string;
+  outputCellId: string;
+  grid: TGridInstance;
+  setIO: (inputIdx: number, outputIdx: number) => void;
+}
+
+export default class Grid implements IGrid {
+  grid: TGridInstance;
+  private readonly size: number;
+  private readonly proximity: number;
+  private io: [number, number];
+
+  constructor(size: number, proximity: number) {
+    this.size = size;
     this.proximity = proximity;
-    this.inputIndex = inputIndex;
-    this.outputIndex = outputIndex;
-    this.instance = this.createGrid();
+    this.io = this.setIO();
+    this.grid = this.setGrid();
   }
 
-  createCellValue = (proximity: number = this.proximity): TValue => {
-    return Math.random() < proximity ? 1 : 0;
+  get inputCellId() {
+    return chordsToCellId(this.io[0], this.io[0]);
+  }
+
+  get outputCellId() {
+    return chordsToCellId(this.io[1], this.io[1]);
+  }
+
+  setIO = (): [number, number] => {
+    const inputIdx = getNumberInRange(0, this.size);
+    const outputIdx = getNumberInRange(0, this.size);
+
+    // make it harder to find the way out
+    if (Math.abs(inputIdx - outputIdx) < this.size * 0.5) {
+      return this.setIO();
+    }
+
+    this.io = [inputIdx, outputIdx];
+
+    this.setGrid();
+    return this.io;
   };
 
-  createRow = (
-    size: number = this.width,
-    proximity: number = this.proximity
-  ): TValue[] =>
-    new Array(size).fill(1).map(() => this.createCellValue(proximity));
-
-  createGrid = (
-    width: number = this.width,
-    sourceHeight: number = this.height,
-    proximity: number = this.proximity,
-    inputIndex: number = this.inputIndex,
-    outputIndex: number = this.outputIndex
-  ) => {
+  setGrid() {
     const grid: TGridInstance = [];
-    let height = sourceHeight;
+    let size = this.size;
 
-    while (height >= 0) {
-      grid.push(this.createRow(width, proximity));
-      height--;
+    while (size >= 0) {
+      grid.push(this.createRow());
+      size--;
     }
 
     // make sure input cells are opened
-    grid[0][inputIndex] = 0;
+    grid[this.io[0]][this.io[0]] = TValue.open;
 
     // make sure output cells are opened
-    grid[sourceHeight][outputIndex - 1] = 0;
+    grid[this.io[1]][this.io[1]] = TValue.open;
 
-    this.instance = grid;
+    this.grid = grid;
     return grid;
+  }
+
+  private createCellValue = (): TValue => {
+    return Math.random() < this.proximity ? TValue.close : TValue.open;
   };
+
+  private createRow(): TValue[] {
+    return new Array(this.size + 1).fill(1).map(this.createCellValue);
+  }
 }

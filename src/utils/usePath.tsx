@@ -46,5 +46,5 @@ export default function usePath(path: Set<string>, fps: number = defaultFps) {
     reset();
   }, [path]);
 
-  return { activeIdx, currentStep, run, stop };
+  return { activeIdx, currentStep, run, stop, path };
 }

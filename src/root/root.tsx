@@ -1,47 +1,41 @@
 import css from './styles.mod.css';
-import { h, FunctionComponent as FC } from 'preact';
-import { memo, useEffect } from 'preact/compat';
+import { h } from 'preact';
+import { memo, useEffect, useState, useCallback } from 'preact/compat';
 
-import GridSource from '~/utils/grid';
-import useGraph from '~/utils/useGraph';
-
+import Dfs from '~/utils/dfs';
 import Grid from '~/grid';
+
 import { useManualPath } from '~/manual';
-import { useDfsPath } from '~/dfs';
+import usePath from '~/utils/usePath';
 import Aside from '~/aside';
-import Print from '~/print';
 
-// genreate initial grid instance
-// prettier-ignore
-const source = new GridSource(
-  20   /* width */,
-  20   /* height */,
-  0.3  /* proximity */,
-  0    /* input index */,
-  20   /* output index */
-);
+const src = new Dfs(30, 0.3, false);
 
-const inputIdx = '0,0';
-const outputIdx = '19,20';
+const useRerender = () => {
+  const [_, setState] = useState({});
+  return useCallback(() => {
+    setState({});
+  }, []);
+};
 
 const Root = () => {
-  const graph = useGraph(source);
-  const dfs = useDfsPath(graph.instance, inputIdx, outputIdx);
-  const manual = useManualPath(graph.instance, inputIdx, outputIdx);
+  const rerender = useRerender();
+  const manual = useManualPath(src.graph, src.inputCellId, src.outputCellId);
+  const dfs = usePath(src.path);
 
-  useEffect(() => {
-    // recreate graph until we have a way out
-    if (!dfs.success) graph.create();
-  }, [dfs.path]);
+  const create = () => {
+    src.generate();
+    rerender();
+  };
 
   return (
     <section className={css.container}>
-      <Aside {...{ dfs, manual, graph }} />
+      <Aside {...{ dfs, manual, create }} />
       <Grid
-        source={source.instance}
-        {...{ inputIdx, outputIdx, dfs, manual }}
+        source={src.grid}
+        {...{ manual, dfs }}
+        outputCellId={src.outputCellId}
       />
-      <Print graph={graph.instance} />
     </section>
   );
 };

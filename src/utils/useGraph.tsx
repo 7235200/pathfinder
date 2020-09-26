@@ -1,16 +1,14 @@
-import type GridSource from '~/utils/grid';
-import { useState, useCallback, useRef } from 'preact/hooks';
+import { TGridInstance } from '~/utils/grid';
+import { useState, useCallback, useRef, useEffect } from 'preact/hooks';
 import Graph from '~/utils/graph';
 
-export default function useGraph(source: GridSource) {
-  const { current: graph } = useRef(new Graph(source.instance));
+export default function useGraph(grid: TGridInstance) {
+  const { current: graph } = useRef(new Graph(grid));
   const [instance, setInstance] = useState(graph.instance);
 
-  const create = useCallback(() => {
-    const grid = source.createGrid();
-    graph.createFrom(grid);
-    setInstance(graph.instance);
-  }, []);
+  useEffect(() => {
+    setInstance(graph.createFrom(grid));
+  }, [grid]);
 
-  return { instance, create };
+  return { instance };
 }
