@@ -14,12 +14,14 @@ type TProps = {
   source: TGridInstance;
   inputCellId: string;
   outputCellId: string;
+  activeIdx: string;
 };
 
 const Wireframe: FC<TProps> = ({
   source,
   inputCellId,
   outputCellId,
+  activeIdx,
   children,
 }) => {
   const [inputX, inputY] = cellIdToChords(inputCellId);
@@ -32,8 +34,8 @@ const Wireframe: FC<TProps> = ({
       className={css.frame}
     >
       <Cell theme="io" x={inputX} y={inputY} isActive />
-      <GridCells {...{ source }} />
       {children}
+      <GridCells {...{ source, activeIdx, outputCellId }} />
       <Cell theme="io" x={outputX} y={outputY} isActive />
     </svg>
   );

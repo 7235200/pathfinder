@@ -15,7 +15,12 @@ type TProps = {
 };
 
 const Grid = ({ dfs, manual, source, inputIdx, outputIdx }: TProps) => (
-  <Frame {...{ source }} inputCellId={inputIdx} outputCellId={outputIdx}>
+  <Frame
+    {...{ source }}
+    activeIdx={manual.activeIdx}
+    inputCellId={inputIdx}
+    outputCellId={outputIdx}
+  >
     <DfsPath path={dfs.path} activeIdx={dfs.activeIdx} {...{ outputIdx }} />
     <ManualPath
       path={manual.path}

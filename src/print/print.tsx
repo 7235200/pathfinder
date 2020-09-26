@@ -6,12 +6,10 @@ import { TGraphInstance } from '~/utils/graph';
 
 const Print: FC<{ graph: TGraphInstance }> = ({ graph }) => (
   <section className={css.container}>
-    <h3>graph print</h3>
-
-    {Array.from(graph).map(node => (
+    {Array.from(graph).map((node) => (
       <div key={node[0]}>
         {`[${node[0]}] => `}
-        {Array.from(node[1]).map(step => `[${step}] `)}
+        {Array.from(node[1]).map((step) => `[${step}] `)}
       </div>
     ))}
   </section>

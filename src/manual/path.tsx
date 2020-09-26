@@ -7,12 +7,12 @@ type TProps = {
   path: Set<string>;
   activeIdx: string;
   outputIdx: string;
-  onStart(): void;
+  onStart?(): void;
 };
 
 const ManualPath = ({ path, activeIdx, outputIdx, onStart }: TProps) => {
   useEffect(() => {
-    onStart();
+    if (onStart) onStart();
   }, [path.size > 0]);
 
   return <Path theme="manual" {...{ path, activeIdx, outputIdx }} />;
