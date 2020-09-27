@@ -1,6 +1,38 @@
 .container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding-top: 10rem;
 }
+
+.header {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.label {
+    color: white;
+    opacity: 0;
+    animation: fade-in 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    margin-left: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.enemyLabel {
+    opacity: 0;
+    animation: fade-in 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    animation-delay: 2s;
+    margin-left: 0.5rem;
+    color:#af5555
+}
+
+@keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }

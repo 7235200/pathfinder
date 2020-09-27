@@ -27,8 +27,6 @@ export default function useManualPath(
   // listener callback
   const handler = useCallback(
     (evt: KeyboardEvent) => {
-      if (!activeCellId) return;
-
       const activeCell = activeCellId.split(',').map(Number);
       const activeGraphNode = graph.get(activeCellId);
 

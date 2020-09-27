@@ -10,7 +10,7 @@
 }
 
 .node[data-theme="grid"][data-depth="2"] {
-    /* --node-background-color: #464545; */
+    --node-background-color: #464545;
 }
 
 .node[data-theme="grid"][data-depth="1"] {

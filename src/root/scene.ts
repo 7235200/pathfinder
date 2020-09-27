@@ -8,7 +8,6 @@ export const createScene = () => {
   scene.addPath('friend');
   scene.addPath('enemy');
   scene.addPath('enemy');
-  scene.addPath('enemy');
   return scene;
 };
 

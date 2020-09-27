@@ -8,6 +8,7 @@ import { useRerender } from '~/utils/useDom';
 import ManualPath, { useManualPath } from '~/manual';
 import EnemyPath, { useEnemyPath } from '~/enemy';
 import scene, { createScene } from './scene';
+import { useSceneControls } from './controls';
 
 const Root = () => {
   const [endGame, setEndGame] = useState('');
@@ -16,6 +17,7 @@ const Root = () => {
   const friend = window.orDie(scene.friend);
 
   const onCreateScene = () => {
+    setEndGame('');
     createScene();
     rerender();
   };
@@ -40,8 +42,25 @@ const Root = () => {
     useEnemyPath(enemy.path, manualPath.activeCellId, onGetCaught)
   );
 
+  useSceneControls({
+    onCreateScene,
+  });
+
   return (
     <section className={css.container}>
+      <div className={css.header}>
+        <span className={css.label}>
+          will you find your friend in a darkness?
+        </span>
+        <span className={css.enemyLabel}>before they know you're here</span>
+        {endGame === 'lose' && (
+          <div className={css.label}>you died</div>
+        )}
+        {endGame === 'win' && (
+          <div className={css.label}>you saved him</div>
+        )}
+      </div>
+
       <Frame
         source={scene.grid}
         activeCellId={manualPath.activeCellId}
