@@ -6,19 +6,16 @@
 
 /* GRID */
 .node[data-theme="grid"][data-active="true"] {
-    --node-background-color: rgba(37, 36, 43, 0.6);
-}
-
-.node[data-theme="grid"][data-depth="0"]:not([data-active="true"]) {
-    --node-background-color: white
+    --node-background-color: rgba(70, 69, 69, 0.8);
 }
 
 .node[data-theme="grid"][data-depth="2"] {
-    /* --node-background-color: rgba(123, 122, 122, 1); */
+    /* --node-background-color: #464545; */
 }
 
 .node[data-theme="grid"][data-depth="1"] {
     /* --node-background-color: rgba(123, 122, 122, .8); */
+    
 }
 
 .node[data-theme="grid"][data-active="true"][data-depth="1"] {

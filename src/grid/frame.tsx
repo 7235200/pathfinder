@@ -31,8 +31,8 @@ const Wireframe: FC<TProps> = ({
       className={css.frame}
     >
       <Cell theme="io" x={outputX} y={outputY} isActive />
-      <GridCells {...{ source, activeIdx, outputCellId }} />
       {children}
+      <GridCells {...{ source, activeIdx, outputCellId }} />
     </svg>
   );
 };

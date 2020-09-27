@@ -9,7 +9,7 @@ import { useManualPath } from '~/manual';
 import usePath from '~/utils/usePath';
 import Aside from '~/aside';
 
-const src = new Dfs(30, 0.3);
+const src = new Dfs(10, 0.3);
 
 const useRerender = () => {
   const [_, setState] = useState({});
