@@ -4,16 +4,17 @@ import Cell from '../cell';
 import { TGridInstance } from '~/utils/grid';
 import { getWarFogVision, chordsToCellId, cellIdToChords } from './utils';
 
-const warForThreshold = 3;
+const warFogThreshold = 3;
 
 type TProps = {
   source: TGridInstance;
-  activeIdx: string;
+  activeCellId: string;
   outputCellId: string;
 };
-const GridCells = ({ source, activeIdx, outputCellId }: TProps) => {
-  const [activeX, activeY] = cellIdToChords(activeIdx);
-  const isComplete = activeIdx === outputCellId;
+
+const GridCells = ({ source, activeCellId, outputCellId }: TProps) => {
+  const [activeX, activeY] = cellIdToChords(activeCellId);
+  const isComplete = activeCellId === outputCellId;
 
   return (
     <Fragment>
@@ -30,7 +31,7 @@ const GridCells = ({ source, activeIdx, outputCellId }: TProps) => {
                 y,
                 activeX,
                 activeY,
-                warForThreshold,
+                warFogThreshold,
                 isComplete
               )}
             />

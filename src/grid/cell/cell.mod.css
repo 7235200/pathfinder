@@ -1,7 +1,7 @@
 .node {
     --node-background-color: transparent;
     fill: var(--node-background-color);
-    transition: fill .2s ease-in;
+    transition: fill .15s ease-in;
 }
 
 /* GRID */
@@ -14,8 +14,7 @@
 }
 
 .node[data-theme="grid"][data-depth="1"] {
-    /* --node-background-color: rgba(123, 122, 122, .8); */
-    
+    --node-background-color: rgba(123, 122, 122, .8);
 }
 
 .node[data-theme="grid"][data-active="true"][data-depth="1"] {

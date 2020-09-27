@@ -1,21 +1,45 @@
-import { h } from 'preact';
+import { h, Fragment } from 'preact';
 
-import { Path } from '~/grid';
-import { useEffect } from 'preact/hooks';
+import Cell from '~/grid/cell';
+
+import { cellIdToChords, getWarFogVision } from '~/grid/common';
 
 type TProps = {
   path: Set<string>;
-  activeIdx: string;
-  outputIdx: string;
-  onStart?(): void;
+  activeCellId: string;
+  outputCellId: string;
 };
 
-const ManualPath = ({ path, activeIdx, outputIdx, onStart }: TProps) => {
-  useEffect(() => {
-    if (onStart) onStart();
-  }, [path.size > 0]);
+const warFogLevel = 3;
 
-  return <Path theme="manual" {...{ path, activeIdx, outputIdx }} />;
+const ManualPath = ({ path, activeCellId, outputCellId }: TProps) => {
+  const [activeX, activeY] = cellIdToChords(activeCellId);
+  const isComplete = activeCellId === outputCellId;
+
+  return (
+    <Fragment>
+      {[...path].map((cellId) => {
+        const [x, y] = cellIdToChords(cellId);
+
+        return (
+          <Cell
+            key={cellId}
+            {...{ x, y }}
+            theme="manual"
+            isActive={cellId === activeCellId || cellId === outputCellId}
+            vision={getWarFogVision(
+              x,
+              y,
+              activeX,
+              activeY,
+              warFogLevel,
+              isComplete
+            )}
+          />
+        );
+      })}
+    </Fragment>
+  );
 };
 
 export default ManualPath;

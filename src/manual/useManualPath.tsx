@@ -1,29 +1,37 @@
-import { useRef, useEffect, useState, useCallback } from 'preact/hooks';
+import { useEffect, useState, useCallback } from 'preact/hooks';
 import { TGraphInstance } from '~/utils/graph';
-
-export type TPath = Set<string>;
-
-enum TKeyboard {
-  left = 37,
-  up = 38,
-  right = 39,
-  down = 40,
-}
+import type Path from '~/utils/path';
+import { useRerender, TKeyboard } from '~/utils/useDom';
 
 export default function useManualPath(
   graph: TGraphInstance,
-  inputCellId: string,
-  outputCellId: string
+  friend: Path,
+  onSuccess: () => void
 ) {
+  const rerender = useRerender();
+  const inputCellId = window.orDie(friend.inputCellId);
+
   const [activeCellId, setActiveCellId] = useState<string>(inputCellId);
-  const path = useRef<TPath>(new Set());
-  const [currentStep, setStep] = useState<number>(0);
+
+  // reset state for the new graph
+  useEffect(() => {
+    setActiveCellId(inputCellId);
+  }, [friend]);
+
+  // next step
+  useEffect(() => {
+    friend.path.add(activeCellId);
+    rerender();
+  }, [activeCellId]);
 
   // listener callback
   const handler = useCallback(
     (evt: KeyboardEvent) => {
+      if (!activeCellId) return;
+
       const activeCell = activeCellId.split(',').map(Number);
       const activeGraphNode = graph.get(activeCellId);
+
       // right
       if (evt.keyCode === TKeyboard.right) {
         const nextCell = toRight(activeCell);
@@ -52,33 +60,22 @@ export default function useManualPath(
   );
 
   useEffect(() => {
-    // go to the next cell
-    path.current.add(activeCellId);
-    setStep((i) => ++i);
-  }, [activeCellId]);
-
-  useEffect(() => {
     // reattach listener
     document.addEventListener('keydown', handler);
 
     // reaches the traget
-    if (activeCellId === outputCellId) {
-      document.removeEventListener('keydown', handler);
+    if (activeCellId === friend.outputCellId) {
+      onSuccess();
+      stop();
     }
 
     // cleanup
-    return () => document.removeEventListener('keydown', handler);
+    return stop;
   }, [handler]);
 
-  // reset state for the new graph
-  useEffect(() => {
-    setStep(0);
-    setActiveCellId(inputCellId);
-    path.current.clear();
-    path.current.add(inputCellId);
-  }, [graph]);
+  const stop = () => document.removeEventListener('keydown', handler);
 
-  return { activeCellId, path: path.current, currentStep };
+  return { activeCellId, stop };
 }
 
 type TNodeId = number[];

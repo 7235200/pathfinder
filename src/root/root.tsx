@@ -1,41 +1,64 @@
 import css from './styles.mod.css';
 import { h } from 'preact';
-import { memo, useEffect, useState, useCallback } from 'preact/compat';
+import { memo, useState } from 'preact/compat';
 
-import Dfs from '~/utils/dfs';
-import Grid from '~/grid';
+import { Frame } from '~/grid';
 
-import { useManualPath } from '~/manual';
-import usePath from '~/utils/usePath';
-import Aside from '~/aside';
-
-const src = new Dfs(10, 0.3);
-
-const useRerender = () => {
-  const [_, setState] = useState({});
-  return useCallback(() => {
-    setState({});
-  }, []);
-};
+import { useRerender } from '~/utils/useDom';
+import ManualPath, { useManualPath } from '~/manual';
+import EnemyPath, { useEnemyPath } from '~/enemy';
+import scene, { createScene } from './scene';
 
 const Root = () => {
-  const rerender = useRerender();
-  const manual = useManualPath(src.graph, src.inputCellId, src.outputCellId);
-  const dfs = usePath(src.path);
+  const [endGame, setEndGame] = useState('');
 
-  const create = async () => {
-    await src.generate();
+  const rerender = useRerender();
+  const friend = window.orDie(scene.friend);
+
+  const onCreateScene = () => {
+    createScene();
     rerender();
   };
 
+  const onFindFriend = () => {
+    manualPath.stop();
+    enemyPaths.forEach((e) => e.stop());
+    setEndGame('win');
+  };
+
+  const onGetCaught = () => {
+    manualPath.stop();
+    enemyPaths.forEach((e) => e.stop());
+    setEndGame('lose');
+  };
+
+  // register friend path to render
+  const manualPath = useManualPath(scene.graph, friend, onFindFriend);
+
+  // register enemy paths to render
+  const enemyPaths = scene.enemies.map((enemy) =>
+    useEnemyPath(enemy.path, manualPath.activeCellId, onGetCaught)
+  );
+
   return (
     <section className={css.container}>
-      <Aside {...{ dfs, manual, create }} />
-      <Grid
-        source={src.grid}
-        {...{ manual, dfs }}
-        outputCellId={src.outputCellId}
-      />
+      <Frame
+        source={scene.grid}
+        activeCellId={manualPath.activeCellId}
+        outputCellId={window.orDie(friend.outputCellId)}
+      >
+        <ManualPath
+          path={friend.path}
+          activeCellId={manualPath.activeCellId}
+          outputCellId={window.orDie(friend.outputCellId)}
+        />
+        {scene.enemies.map((enemy, idx) => (
+          <EnemyPath
+            path={enemy.path}
+            activeCellId={enemyPaths[idx].activeIdx}
+          />
+        ))}
+      </Frame>
     </section>
   );
 };
