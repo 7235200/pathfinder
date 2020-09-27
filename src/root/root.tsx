@@ -9,7 +9,7 @@ import { useManualPath } from '~/manual';
 import usePath from '~/utils/usePath';
 import Aside from '~/aside';
 
-const src = new Dfs(30, 0.3, false);
+const src = new Dfs(30, 0.3);
 
 const useRerender = () => {
   const [_, setState] = useState({});
@@ -23,8 +23,8 @@ const Root = () => {
   const manual = useManualPath(src.graph, src.inputCellId, src.outputCellId);
   const dfs = usePath(src.path);
 
-  const create = () => {
-    src.generate();
+  const create = async () => {
+    await src.generate();
     rerender();
   };
 

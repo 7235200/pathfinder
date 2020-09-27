@@ -1,5 +1,4 @@
-import { TGridInstance } from './grid';
-import GridSource, { IGrid } from '~/utils/grid';
+import GridSource from '~/utils/grid';
 
 export type TGraphInstance = Map<string, Set<string>>;
 

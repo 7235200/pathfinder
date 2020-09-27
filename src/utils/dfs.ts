@@ -1,4 +1,4 @@
-import Graph, { TGraphInstance } from './graph';
+import Graph from './graph';
 
 interface IDfs {
   path: Set<string>;
@@ -6,17 +6,15 @@ interface IDfs {
 }
 
 export default class Dfs extends Graph implements IDfs {
-  private readonly canFail: boolean;
   success: boolean;
   path: Set<string>;
 
-  constructor(size: number, proximity: number, canFail: boolean = true) {
+  constructor(size: number, proximity: number) {
     super(size, proximity);
 
     this.success = false;
     this.path = new Set();
-    this.canFail = canFail;
-    this.search();
+    this.generate();
   }
 
   search = (
@@ -42,21 +40,23 @@ export default class Dfs extends Graph implements IDfs {
       }
     }
 
-    if (!this.canFail) {
-      this.setIO();
-      this.setGraph();
-      // TODO: MX CALL STACK
-      return this.search();
-    }
-
     this.path = visited;
     this.success = false;
     return null;
   };
 
   generate() {
-    this.setIO();
-    this.setGraph();
-    this.search();
+    this.success = false;
+
+    return new Promise((resolve) => {
+      while (!this.success) {
+        this.setIO();
+        this.setGrid();
+        this.setGraph();
+        this.search();
+      }
+
+      resolve();
+    });
   }
 }

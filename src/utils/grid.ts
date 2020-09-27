@@ -17,7 +17,7 @@ export interface IGrid {
 }
 
 export default class Grid implements IGrid {
-  grid: TGridInstance;
+  grid: TGridInstance = [];
   private readonly size: number;
   private readonly proximity: number;
   private io: [number, number];
@@ -26,7 +26,7 @@ export default class Grid implements IGrid {
     this.size = size;
     this.proximity = proximity;
     this.io = this.setIO();
-    this.grid = this.setGrid();
+    this.setGrid();
   }
 
   get inputCellId() {
@@ -47,28 +47,23 @@ export default class Grid implements IGrid {
     }
 
     this.io = [inputIdx, outputIdx];
-
-    this.setGrid();
     return this.io;
   };
 
   setGrid() {
-    const grid: TGridInstance = [];
+    this.grid = [];
     let size = this.size;
 
     while (size >= 0) {
-      grid.push(this.createRow());
+      this.grid.push(this.createRow());
       size--;
     }
 
     // make sure input cells are opened
-    grid[this.io[0]][this.io[0]] = TValue.open;
+    this.grid[this.io[0]][this.io[0]] = TValue.open;
 
     // make sure output cells are opened
-    grid[this.io[1]][this.io[1]] = TValue.open;
-
-    this.grid = grid;
-    return grid;
+    this.grid[this.io[1]][this.io[1]] = TValue.open;
   }
 
   private createCellValue = (): TValue => {
