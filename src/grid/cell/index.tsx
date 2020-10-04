@@ -1,1 +1,1 @@
-export { default, TCellTheme } from './cell';
+export { default, TCellTheme, TVision } from './cell';

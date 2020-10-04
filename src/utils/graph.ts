@@ -1,62 +1,69 @@
-import { TGridInstance } from './grid';
+import GridSource from '~/utils/grid';
+import Path, { IPathConstructor } from '~/utils/path';
+
 export type TGraphInstance = Map<string, Set<string>>;
 
-export default class Graph {
-  source: TGridInstance;
-  instance: TGraphInstance = new Map();
+interface IGraph {
+  graph: TGraphInstance;
+  paths: Path[];
+  friend: Path | null;
+  enemies: Path[];
+  addPath(...args: Parameters<IPathConstructor>): void;
+}
 
-  constructor(source: TGridInstance) {
-    this.source = source;
-    this.createFrom(source);
+export default class Graph extends GridSource implements IGraph {
+  graph: TGraphInstance = new Map();
+  paths: Path[];
+
+  constructor(size: number, proximity: number) {
+    super(size, proximity);
+
+    this.paths = [];
+    this.setGraph();
   }
 
-  addNode(node: string) {
-    this.instance.set(node, new Set());
+  get friend() {
+    return this.paths.find((p) => p.type === 'friend') || null;
   }
 
-  addEdge(from: string, to: string) {
-    const node = this.instance.get(from);
-    if (node) node.add(to);
+  get enemies() {
+    return this.paths.filter((p) => p.type === 'enemy');
   }
 
-  addSibling(currentNode: string, sibling: [number, number]) {
-    const node = String(sibling);
-    if (!this.instance.has(node)) this.addNode(node);
-    this.addEdge(currentNode, node);
-  }
+  setGraph() {
+    this.paths = [];
+    this.graph = new Map();
 
-  createFrom(matrix: TGridInstance) {
-    this.instance = new Map();
     let x = 0;
 
-    while (x < matrix[0].length) {
+    while (x < this.grid[0].length) {
       let y = 0;
 
-      while (y < matrix.length) {
-        const item = matrix[y][x];
+      while (y < this.grid.length) {
+        const item = this.grid[y][x];
 
         if (item === 0) {
           const currentNode = [x, y].toString();
-          this.addNode(currentNode);
+          this.#addNode(currentNode);
 
           // right
-          if (matrix[y][x + 1] === 0) {
-            this.addSibling(currentNode, [x + 1, y]);
+          if (this.grid[y][x + 1] === 0) {
+            this.#addSibling(currentNode, [x + 1, y]);
           }
 
           // down
-          if (matrix[y + 1] && matrix[y + 1][x] === 0) {
-            this.addSibling(currentNode, [x, y + 1]);
+          if (this.grid[y + 1] && this.grid[y + 1][x] === 0) {
+            this.#addSibling(currentNode, [x, y + 1]);
           }
 
           // left
-          if (matrix[y][x - 1] === 0) {
-            this.addSibling(currentNode, [x - 1, y]);
+          if (this.grid[y][x - 1] === 0) {
+            this.#addSibling(currentNode, [x - 1, y]);
           }
 
           // up
-          if (matrix[y - 1] && matrix[y - 1][x] === 0) {
-            this.addSibling(currentNode, [x, y - 1]);
+          if (this.grid[y - 1] && this.grid[y - 1][x] === 0) {
+            this.#addSibling(currentNode, [x, y - 1]);
           }
         }
 
@@ -66,4 +73,32 @@ export default class Graph {
       x++;
     }
   }
+
+  addPath = (...args: Parameters<IPathConstructor>) => {
+    const path = new Path(...args);
+    // find the path
+    path.solve(this.graph, this.size);
+
+    // make sure io cells are opened
+    this.openCell(path.inputCellId!);
+    this.openCell(path.outputCellId!);
+
+    // add to the store
+    this.paths.push(path);
+  };
+
+  #addNode = (node: string) => {
+    this.graph.set(node, new Set());
+  };
+
+  #addEdge = (from: string, to: string) => {
+    const node = this.graph.get(from);
+    if (node) node.add(to);
+  };
+
+  #addSibling = (currentNode: string, sibling: [number, number]) => {
+    const node = String(sibling);
+    if (!this.graph.has(node)) this.#addNode(node);
+    this.#addEdge(currentNode, node);
+  };
 }

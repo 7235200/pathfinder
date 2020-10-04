@@ -1,24 +1,39 @@
 .node {
     --node-background-color: transparent;
     fill: var(--node-background-color);
-    transition: fill .2s ease-in;
+    transition: fill .15s ease-in;
 }
 
+/* GRID */
 .node[data-theme="grid"][data-active="true"] {
-    --node-background-color: lightgrey;
+    --node-background-color: rgba(70, 69, 69, 0.8);
 }
 
+.node[data-theme="grid"][data-depth="2"] {
+    --node-background-color: #464545;
+}
+
+.node[data-theme="grid"][data-depth="1"] {
+    --node-background-color: rgba(123, 122, 122, .8);
+}
+
+.node[data-theme="grid"][data-active="true"][data-depth="1"] {
+    --node-background-color: rgba(123, 122, 122, .9);
+}
+
+/* IO */
 .node[data-theme="io"][data-active="true"] {
-    --node-background-color: #43729c;
+    --node-background-color: rgba(202, 68, 44, 0.5);
 }
 
+/* PATH */
 .node[data-theme="manual"][data-active="true"] {
     transition: unset;
-    --node-background-color: rgba(23,113,130, 0.7);
+    --node-background-color: rgba(202, 68, 44, 0.6);
 }
 
 .node[data-theme="manual"][data-visited="true"] {
-    --node-background-color: rgba(23,113,130,.5);
+    --node-background-color: rgba(202, 68, 44, 0.6);
 }
 
 .node[data-theme="dfs"][data-active="true"] {

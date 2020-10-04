@@ -1,2 +1,2 @@
-export { default } from './grid';
-export { GridPath as Path } from './common';
+export { default as Frame } from './frame';
+export { chordsToCellId } from './common';
