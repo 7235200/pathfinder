@@ -15,8 +15,8 @@ const plugins = [
     extract: true,
     sourceMap: !isProduction,
     minimize: isProduction,
-    extensions: ['.css']
-  })
+    extensions: ['.css'],
+  }),
 ];
 
 if (isProduction) plugins.push(terser());
@@ -28,5 +28,8 @@ export default {
     file: pkg.main,
     format: 'cjs'
   },
-  plugins
+  plugins,
+  // https://github.com/WebReflection/hyperHTML/issues/304
+  context: 'null',
+  moduleContext: 'null',
 };
